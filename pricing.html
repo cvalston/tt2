@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: sans-serif;
+      background: #0f172a;
+      color: #f1f5f9;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    p.subtitle { color: #94a3b8; margin-bottom: 3rem; font-size: 1.1rem; }
+    .cards {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 2rem;
+      width: 220px;
+      text-align: center;
+    }
+    .card.featured {
+      border-color: #6366f1;
+      background: #1e1b4b;
+    }
+    .card h2 { font-size: 1.1rem; color: #94a3b8; margin-bottom: 1rem; }
+    .card .price { font-size: 2.5rem; font-weight: bold; }
+    .card .price span { font-size: 1rem; color: #94a3b8; }
+    .card ul { list-style: none; margin: 1.5rem 0; text-align: left; }
+    .card ul li { padding: 0.4rem 0; color: #cbd5e1; font-size: 0.95rem; }
+    .card ul li::before { content: "✓ "; color: #6366f1; }
+    .btn {
+      display: inline-block;
+      padding: 0.6rem 1.5rem;
+      border-radius: 8px;
+      background: #6366f1;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+    .btn.outline {
+      background: transparent;
+      border: 1px solid #334155;
+      color: #94a3b8;
+    }
+    nav { margin-top: 3rem; }
+    nav a { margin: 0 1rem; color: #94a3b8; text-decoration: none; }
+    nav a:hover { color: #fff; }
+  </style>
+</head>
+<body>
+  <h1>Simple Pricing</h1>
+  <p class="subtitle">Pick a plan that works for you.</p>
+  <div class="cards">
+    <div class="card">
+      <h2>Free</h2>
+      <div class="price">$0 <span>/mo</span></div>
+      <ul>
+        <li>1 project</li>
+        <li>1 GB storage</li>
+        <li>Community support</li>
+      </ul>
+      <a href="#" class="btn outline">Get started</a>
+    </div>
+    <div class="card featured">
+      <h2>Pro</h2>
+      <div class="price">$12 <span>/mo</span></div>
+      <ul>
+        <li>10 projects</li>
+        <li>20 GB storage</li>
+        <li>Priority support</li>
+      </ul>
+      <a href="#" class="btn">Get started</a>
+    </div>
+    <div class="card">
+      <h2>Team</h2>
+      <div class="price">$49 <span>/mo</span></div>
+      <ul>
+        <li>Unlimited projects</li>
+        <li>100 GB storage</li>
+        <li>Dedicated support</li>
+      </ul>
+      <a href="#" class="btn outline">Get started</a>
+    </div>
+  </div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</body>
+</html>
