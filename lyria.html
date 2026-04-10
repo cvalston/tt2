@@ -1,1 +1,981 @@
+<!DOCTYPE html>
 
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LyriaStudio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Unbounded:wght@400;600;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080808;--panel:#111;--raised:#181818;--hover:#222;--amber:#f5a623;--amber-dim:#b37a1a;--ag:rgba(245,166,35,0.12);--ags:rgba(245,166,35,0.28);--tp:#f0ece4;--tm:#5a5550;--ts:#9a9490;--bd:#252525;--bl:#333;--ba:rgba(245,166,35,0.38);--red:#f87171;--rg:rgba(248,113,113,0.1);}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--tp);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.4;}
+.halo{position:fixed;top:-300px;left:50%;transform:translateX(-50%);width:700px;height:500px;background:radial-gradient(ellipse,rgba(245,166,35,0.05) 0%,transparent 70%);pointer-events:none;z-index:0;}
+.app{position:relative;z-index:1;max-width:660px;margin:0 auto;padding-bottom:100px;}
+
+/* HEADER */
+header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 13px;border-bottom:1px solid var(–bd);position:sticky;top:0;background:rgba(8,8,8,0.92);backdrop-filter:blur(20px);z-index:200;}
+.logo{font-family:‘Unbounded’,sans-serif;font-weight:700;font-size:16px;letter-spacing:-.3px;}
+.logo em{color:var(–amber);font-style:normal;}
+.logo sup{font-size:7.5px;color:var(–tm);font-family:‘Space Mono’,monospace;vertical-align:super;}
+.hdr-r{display:flex;gap:7px;align-items:center;}
+.badge{font-family:‘Space Mono’,monospace;font-size:8.5px;letter-spacing:.12em;padding:3px 9px;border-radius:999px;border:1px solid var(–ba);color:var(–amber);background:var(–ag);}
+.ibtn{width:33px;height:33px;border-radius:8px;background:var(–raised);border:1px solid var(–bd);color:var(–ts);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;font-size:14px;}
+.ibtn:hover{background:var(–hover);color:var(–tp);border-color:var(–bl);}
+
+/* PANELS */
+.panel{margin:9px 13px;background:var(–panel);border:1px solid var(–bd);border-radius:15px;overflow:hidden;transition:border-color .2s;}
+.panel.lit{border-color:var(–ba);}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:13px 15px 0;}
+.plbl{font-family:‘Space Mono’,monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(–tm);}
+.plbl.on{color:var(–amber);}
+.pb{padding:11px 15px 15px;}
+
+/* VIBE */
+.vgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.vc{background:var(–raised);border:1px solid var(–bd);border-radius:11px;padding:10px 5px 8px;text-align:center;cursor:pointer;transition:all .15s;user-select:none;}
+.vc:hover{background:var(–hover);border-color:var(–bl);transform:translateY(-1px);}
+.vc.sel{background:var(–ag);border-color:var(–amber);}
+.vi{font-size:20px;display:block;margin-bottom:3px;}
+.vl{font-size:10px;font-weight:500;color:var(–ts);}
+.vc.sel .vl{color:var(–amber);}
+
+/* CHIPS */
+.cscroll{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
+.cscroll::-webkit-scrollbar{display:none;}
+.chip{flex-shrink:0;padding:5px 13px;border-radius:999px;border:1px solid var(–bd);background:var(–raised);font-size:12px;font-weight:500;color:var(–ts);cursor:pointer;transition:all .15s;white-space:nowrap;user-select:none;}
+.chip:hover{background:var(–hover);color:var(–tp);border-color:var(–bl);}
+.chip.sel{background:var(–ag);border-color:var(–amber);color:var(–amber);}
+.chip.sm{padding:4px 9px;font-size:10.5px;}
+
+/* INSTRUMENTS */
+.igrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.ibut{background:var(–raised);border:1px solid var(–bd);border-radius:9px;padding:9px 4px 7px;text-align:center;cursor:pointer;transition:all .15s;user-select:none;}
+.ibut:hover{background:var(–hover);border-color:var(–bl);}
+.ibut.sel{background:var(–ag);border-color:var(–amber);}
+.ii{font-size:18px;display:block;margin-bottom:3px;}
+.il{font-size:9px;font-weight:500;color:var(–tm);}
+.ibut.sel .il{color:var(–amber);}
+
+/* TEMPO */
+.swrap{margin:5px 0 3px;}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;border-radius:2px;background:var(–raised);outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:21px;height:21px;border-radius:50%;background:var(–amber);box-shadow:0 0 12px var(–ags);cursor:pointer;transition:transform .1s;}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15);}
+input[type=range]::-moz-range-thumb{width:21px;height:21px;border:none;border-radius:50%;background:var(–amber);cursor:pointer;}
+.trow{display:flex;justify-content:space-between;align-items:center;margin-top:5px;}
+.tend{font-size:9.5px;color:var(–tm);font-family:‘Space Mono’,monospace;}
+.tpill{font-family:‘Space Mono’,monospace;font-size:9.5px;background:var(–ag);border:1px solid var(–ba);color:var(–amber);padding:3px 9px;border-radius:999px;}
+
+/* ARC */
+.agrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.abtn{background:var(–raised);border:1px solid var(–bd);border-radius:9px;padding:11px 7px 7px;cursor:pointer;transition:all .15s;text-align:center;user-select:none;}
+.abtn:hover{background:var(–hover);border-color:var(–bl);}
+.abtn.sel{background:var(–ag);border-color:var(–amber);}
+.avis{display:flex;align-items:flex-end;justify-content:center;gap:2px;height:24px;margin-bottom:5px;}
+.ab{width:5px;border-radius:2px;background:var(–bl);}
+.abtn.sel .ab{background:var(–amber);}
+.albl{font-size:9.5px;color:var(–tm);font-weight:500;}
+.abtn.sel .albl{color:var(–amber);}
+
+/* TOGGLE */
+.tgrp{display:flex;background:var(–raised);border-radius:9px;padding:3px;border:1px solid var(–bd);}
+.topt{flex:1;padding:7px 8px;text-align:center;font-size:12px;font-weight:500;color:var(–tm);cursor:pointer;border-radius:7px;transition:all .15s;user-select:none;}
+.topt.on{background:var(–amber);color:#000;}
+
+/* VOCAL SUB */
+.vsub{margin-top:10px;padding:13px;background:var(–raised);border-radius:11px;border:1px solid var(–bd);display:none;animation:fs .2s ease;}
+.vsub.show{display:block;}
+.vrow{display:flex;align-items:center;gap:7px;margin-bottom:8px;flex-wrap:wrap;}
+.vrow:last-child{margin-bottom:0;}
+.vrl{font-size:9.5px;font-family:‘Space Mono’,monospace;color:var(–tm);width:52px;flex-shrink:0;}
+.lchips{display:flex;flex-wrap:wrap;gap:5px;}
+textarea.lbox{width:100%;background:var(–bg);border:1px solid var(–bd);border-radius:9px;color:var(–tp);font-family:‘Space Mono’,monospace;font-size:10.5px;line-height:1.75;padding:11px 13px;resize:none;outline:none;transition:border-color .2s;min-height:72px;margin-top:8px;}
+textarea.lbox::placeholder{color:var(–tm);}
+textarea.lbox:focus{border-color:var(–ba);}
+
+/* PROMPT */
+.pbox{width:100%;background:var(–raised);border:1px solid var(–bd);border-radius:11px;color:var(–tp);font-family:‘DM Sans’,sans-serif;font-size:13px;line-height:1.6;padding:12px 14px;resize:none;outline:none;transition:border-color .2s;min-height:84px;}
+.pbox::placeholder{color:var(–tm);}
+.pbox:focus{border-color:var(–ba);}
+
+/* OPTIMIZE BTN */
+.optbtn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:9px 16px;margin-top:8px;background:transparent;border:1px solid var(–ba);border-radius:9px;color:var(–amber);font-family:‘DM Sans’,sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;transition:all .2s;}
+.optbtn:hover{background:var(–ag);}
+.optbtn:disabled{opacity:.4;cursor:not-allowed;}
+.ospin{width:12px;height:12px;border:2px solid var(–amber-dim);border-top-color:var(–amber);border-radius:50%;animation:spin .65s linear infinite;display:none;}
+.optbtn.loading .ospin{display:block;}
+
+/* OPT RESULT */
+.ores{margin-top:9px;background:var(–bg);border:1px solid var(–ba);border-radius:9px;padding:12px 14px;display:none;animation:fs .2s ease;}
+.ores.show{display:block;}
+.orlbl{font-family:‘Space Mono’,monospace;font-size:8.5px;letter-spacing:.15em;text-transform:uppercase;color:var(–amber);margin-bottom:6px;}
+.ortxt{font-size:12px;line-height:1.65;color:var(–tp);}
+.useopt{margin-top:8px;padding:5px 12px;background:var(–ag);border:1px solid var(–ba);border-radius:7px;color:var(–amber);font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;font-family:‘DM Sans’,sans-serif;}
+.useopt:hover{background:rgba(245,166,35,0.2);}
+
+/* IDEAS */
+.icard{background:var(–raised);border:1px solid var(–bd);border-radius:10px;padding:11px 13px;cursor:pointer;transition:all .15s;margin-bottom:6px;position:relative;overflow:hidden;}
+.icard::before{content:’’;position:absolute;left:0;top:0;bottom:0;width:3px;background:var(–amber);opacity:0;transition:opacity .15s;}
+.icard:hover{background:var(–hover);border-color:#383838;transform:translateX(2px);}
+.icard:hover::before{opacity:1;}
+.itag{display:inline-block;font-family:‘Space Mono’,monospace;font-size:8px;letter-spacing:.1em;color:var(–amber);text-transform:uppercase;margin-bottom:3px;}
+.itxt{font-size:12px;line-height:1.5;color:var(–ts);font-style:italic;}
+.iref{display:flex;align-items:center;gap:5px;padding:6px 0 0;font-size:11px;color:var(–tm);cursor:pointer;background:none;border:none;font-family:‘DM Sans’,sans-serif;transition:color .15s;}
+.iref:hover{color:var(–amber);}
+
+/* LIVE PROMPT */
+.lprev{background:var(–bg);border:1px solid var(–bd);border-radius:9px;padding:11px 13px;font-family:‘Space Mono’,monospace;font-size:10px;line-height:1.75;color:var(–ts);max-height:105px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(–bd) transparent;}
+.lprev .hl{color:var(–amber);}
+.lprev .dm{color:var(–tm);}
+
+/* NEG */
+.nwrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.nchip{padding:4px 10px;border-radius:999px;border:1px solid var(–bd);background:var(–raised);font-size:11px;color:var(–tm);cursor:pointer;transition:all .15s;user-select:none;}
+.nchip:hover{border-color:var(–red);color:var(–red);background:var(–rg);}
+.nchip.sel{border-color:var(–red);color:var(–red);background:var(–rg);}
+
+/* MODEL */
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.mcard{background:var(–raised);border:1px solid var(–bd);border-radius:11px;padding:12px;cursor:pointer;transition:all .15s;user-select:none;}
+.mcard:hover{background:var(–hover);border-color:var(–bl);}
+.mcard.sel{background:var(–ag);border-color:var(–amber);}
+.mbdg{display:inline-block;font-size:8px;font-family:‘Space Mono’,monospace;padding:2px 6px;border-radius:999px;border:1px solid var(–bd);color:var(–tm);margin-bottom:6px;}
+.mcard.sel .mbdg{border-color:var(–ba);color:var(–amber);}
+.mname{font-family:‘Unbounded’,sans-serif;font-size:10px;font-weight:600;color:var(–tp);margin-bottom:3px;}
+.mcard.sel .mname{color:var(–amber);}
+.mdesc{font-size:10px;color:var(–tm);line-height:1.45;}
+
+/* GENERATE */
+.gz{margin:11px 13px 0;}
+.gbtn{width:100%;padding:18px;background:var(–amber);border:none;border-radius:15px;font-family:‘Unbounded’,sans-serif;font-size:13.5px;font-weight:700;color:#000;cursor:pointer;letter-spacing:.05em;transition:all .2s;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:9px;}
+.gbtn::before{content:’’;position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,transparent 55%);}
+.gbtn:hover{transform:translateY(-2px);box-shadow:0 10px 34px rgba(245,166,35,.35);}
+.gbtn:active{transform:translateY(0);}
+.gbtn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+.gspin{width:16px;height:16px;border:2px solid rgba(0,0,0,.25);border-top-color:#000;border-radius:50%;animation:spin .65s linear infinite;display:none;}
+.gbtn.loading .gspin{display:block;}
+.gprog{height:3px;background:var(–bd);border-radius:2px;margin-top:9px;overflow:hidden;display:none;}
+.gprog.show{display:block;}
+.gbar{height:100%;background:var(–amber);border-radius:2px;width:0%;transition:width .4s ease;}
+
+/* PLAYER */
+.player{margin:9px 13px;background:var(–panel);border:1px solid var(–ba);border-radius:15px;padding:17px;display:none;animation:fs .3s ease;}
+.player.show{display:block;}
+.ptop{display:flex;align-items:flex-start;gap:13px;margin-bottom:13px;}
+.tart{width:50px;height:50px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;border:1px solid var(–ba);}
+.tinf{flex:1;min-width:0;}
+.ttitle{font-family:‘Unbounded’,sans-serif;font-size:12px;font-weight:600;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tmeta{font-size:10px;color:var(–tm);font-family:‘Space Mono’,monospace;line-height:1.6;}
+.waveform{display:flex;align-items:center;gap:2px;height:42px;margin-bottom:11px;cursor:pointer;padding:0 3px;}
+.wb{flex:1;border-radius:2px;background:var(–bd);transition:background .08s;}
+.wb.done{background:var(–amber-dim);}
+.wb.cur{background:var(–amber);}
+.pctrl{display:flex;align-items:center;gap:11px;}
+.playbtn{width:41px;height:41px;background:var(–amber);border:none;border-radius:50%;color:#000;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.playbtn:hover{transform:scale(1.1);box-shadow:0 4px 20px rgba(245,166,35,.4);}
+.ttxt{font-family:‘Space Mono’,monospace;font-size:10.5px;color:var(–tm);}
+.pbtns{display:flex;gap:6px;margin-top:11px;}
+.actbtn{flex:1;padding:7px 8px;border-radius:7px;border:1px solid var(–bd);background:var(–raised);color:var(–ts);font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;font-family:‘DM Sans’,sans-serif;display:flex;align-items:center;justify-content:center;gap:5px;}
+.actbtn:hover{background:var(–hover);color:var(–tp);border-color:var(–bl);}
+.actbtn.hl{border-color:var(–ba);color:var(–amber);}
+.actbtn.hl:hover{background:var(–ag);}
+
+/* LIBRARY */
+.lgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.litem{background:var(–raised);border:1px solid var(–bd);border-radius:9px;padding:10px;cursor:pointer;transition:all .15s;}
+.litem:hover{background:var(–hover);border-color:var(–bl);transform:translateY(-1px);}
+.lart{height:58px;border-radius:6px;margin-bottom:7px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.lname{font-size:10.5px;font-weight:600;color:var(–tp);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lmeta{font-size:9px;color:var(–tm);font-family:‘Space Mono’,monospace;}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:300;background:rgba(9,9,9,0.95);backdrop-filter:blur(20px);border-top:1px solid var(–bd);display:flex;padding:9px 0 max(9px,env(safe-area-inset-bottom));}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:all .15s;padding:3px 0;}
+.nico{font-size:17px;transition:transform .15s;}
+.nlbl{font-size:9px;font-family:‘Space Mono’,monospace;letter-spacing:.06em;color:var(–tm);transition:color .15s;}
+.ni.active .nlbl{color:var(–amber);}
+.ni.active .nico{transform:scale(1.1);}
+
+/* TABS */
+.tab{display:none;}
+.tab.active{display:block;}
+
+/* TOAST */
+.toast{position:fixed;bottom:75px;left:50%;transform:translateX(-50%) translateY(16px);background:#1c1c1c;border:1px solid var(–bl);border-radius:9px;padding:10px 18px;font-size:12px;color:var(–tp);box-shadow:0 8px 28px rgba(0,0,0,.6);z-index:500;opacity:0;transition:all .22s ease;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* DIVIDER */
+.sdiv{display:flex;align-items:center;gap:9px;padding:5px 15px;margin-top:5px;}
+.sl{flex:1;height:1px;background:var(–bd);}
+.st{font-family:‘Space Mono’,monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(–tm);}
+
+/* COLLAPSE */
+.coll{overflow:hidden;transition:max-height .28s ease;}
+.coll.closed{max-height:0!important;}
+.caret{font-size:10px;color:var(–tm);cursor:pointer;padding:2px 5px;transition:transform .2s;}
+.caret.open{transform:rotate(180deg);}
+
+/* KEYFRAMES */
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes fs{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:translateY(0);}}
+</style>
+
+</head>
+<body>
+<div class="halo"></div>
+<div class="toast" id="toast"></div>
+
+<header>
+  <div class="logo">Lyria<em>Studio</em><sup>β</sup></div>
+  <div class="hdr-r">
+    <div class="badge">MOCK MODE</div>
+    <button class="ibtn" onclick="showTab('library')">📚</button>
+    <button class="ibtn">⚙️</button>
+  </div>
+</header>
+
+<div class="app">
+
+  <!-- TAB: CREATE -->
+
+  <div class="tab active" id="tab-create">
+
+```
+<!-- 1. VIBE -->
+<div class="panel">
+  <div class="ph"><span class="plbl">01 / VIBE</span></div>
+  <div class="pb"><div class="vgrid" id="vibe-grid"></div></div>
+</div>
+
+<!-- 2. GENRE -->
+<div class="panel">
+  <div class="ph">
+    <span class="plbl">02 / GENRE</span>
+    <span class="caret open" id="c-genre" onclick="tc('genre')">▾</span>
+  </div>
+  <div class="pb coll" id="s-genre">
+    <div class="cscroll" id="genre-chips" style="margin-bottom:8px;"></div>
+    <div class="cscroll" id="era-chips"></div>
+  </div>
+</div>
+
+<!-- 3. INSTRUMENTS -->
+<div class="panel">
+  <div class="ph">
+    <span class="plbl">03 / INSTRUMENTS</span>
+    <span class="caret open" id="c-instr" onclick="tc('instr')">▾</span>
+  </div>
+  <div class="pb coll" id="s-instr">
+    <div class="igrid" id="instr-grid"></div>
+  </div>
+</div>
+
+<!-- 4. TEMPO -->
+<div class="panel">
+  <div class="ph">
+    <span class="plbl">04 / TEMPO</span>
+    <span class="caret open" id="c-tempo" onclick="tc('tempo')">▾</span>
+  </div>
+  <div class="pb coll" id="s-tempo">
+    <div class="swrap">
+      <input type="range" id="tempo-sl" min="40" max="200" value="90" oninput="onTempo(this.value)">
+    </div>
+    <div class="trow">
+      <span class="tend">Slow</span>
+      <span class="tpill" id="tpill">Laid-back · ~90 BPM</span>
+      <span class="tend">Fast</span>
+    </div>
+  </div>
+</div>
+
+<!-- 5. ENERGY ARC -->
+<div class="panel">
+  <div class="ph">
+    <span class="plbl">05 / ENERGY ARC</span>
+    <span class="caret open" id="c-arc" onclick="tc('arc')">▾</span>
+  </div>
+  <div class="pb coll" id="s-arc">
+    <div class="agrid" id="arc-grid"></div>
+  </div>
+</div>
+
+<!-- 6. VOCALS -->
+<div class="panel">
+  <div class="ph">
+    <span class="plbl">06 / VOCALS</span>
+    <span class="caret open" id="c-vocal" onclick="tc('vocal')">▾</span>
+  </div>
+  <div class="pb coll" id="s-vocal">
+    <div class="tgrp">
+      <div class="topt on" id="v-inst" onclick="setVocal('inst')">🎸 Instrumental</div>
+      <div class="topt" id="v-voc" onclick="setVocal('voc')">🎤 With Vocals</div>
+    </div>
+    <div class="vsub" id="vsub">
+      <div class="vrow">
+        <span class="vrl">GENDER</span>
+        <div class="tgrp" style="flex:1;">
+          <div class="topt on" onclick="tvopt(this,'g')" data-v="male">Male</div>
+          <div class="topt" onclick="tvopt(this,'g')" data-v="female">Female</div>
+          <div class="topt" onclick="tvopt(this,'g')" data-v="duet">Duet</div>
+        </div>
+      </div>
+      <div class="vrow">
+        <span class="vrl">TIMBRE</span>
+        <div class="lchips" id="timbre-chips"></div>
+      </div>
+      <div class="vrow">
+        <span class="vrl">LANG</span>
+        <div class="lchips" id="lang-chips"></div>
+      </div>
+      <div class="vrow" style="flex-direction:column;align-items:flex-start;">
+        <span class="vrl" style="margin-bottom:5px;width:auto;">LYRICS</span>
+        <div class="tgrp" style="width:100%;">
+          <div class="topt on" onclick="setLyr(this,'ai')">✨ AI Writes</div>
+          <div class="topt" onclick="setLyr(this,'theme')">💬 Theme</div>
+          <div class="topt" onclick="setLyr(this,'custom')">✏️ Custom</div>
+        </div>
+        <textarea class="lbox" id="lbox" placeholder="Describe lyric theme or paste your lyrics…" style="display:none;"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI DIVIDER -->
+<div class="sdiv"><div class="sl"></div><span class="st">AI Prompt Engine</span><div class="sl"></div></div>
+
+<!-- 7. YOUR IDEA -->
+<div class="panel lit">
+  <div class="ph"><span class="plbl on">07 / YOUR IDEA</span></div>
+  <div class="pb">
+    <textarea class="pbox" id="uprompt" placeholder="Describe your track… e.g. 'a chill late-night jazz vibe for coding'" rows="3"></textarea>
+    <button class="optbtn" id="optbtn" onclick="doOptimize()">
+      <div class="ospin" id="ospin"></div>
+      <span id="obtnlbl">✨ Optimize with AI</span>
+    </button>
+    <div class="ores" id="ores">
+      <div class="orlbl">✦ Optimized Prompt</div>
+      <div class="ortxt" id="ortxt"></div>
+      <button class="useopt" onclick="useOpt()">↑ Use this prompt</button>
+    </div>
+  </div>
+</div>
+
+<!-- 8. STARTER IDEAS -->
+<div class="panel">
+  <div class="ph">
+    <span class="plbl">08 / STARTER IDEAS</span>
+    <span class="caret open" id="c-ideas" onclick="tc('ideas')">▾</span>
+  </div>
+  <div class="pb coll" id="s-ideas">
+    <div id="ideas-list"></div>
+    <button class="iref" onclick="refreshIdeas()"><span>↻</span><span>Refresh ideas</span></button>
+  </div>
+</div>
+
+<!-- 9. LIVE PROMPT -->
+<div class="panel">
+  <div class="ph">
+    <span class="plbl">09 / LIVE PROMPT</span>
+    <span class="caret open" id="c-prev" onclick="tc('prev')">▾</span>
+  </div>
+  <div class="pb coll" id="s-prev">
+    <div class="lprev" id="lprev"><span class="dm">Select options above to build your prompt…</span></div>
+  </div>
+</div>
+
+<!-- 10. EXCLUDE -->
+<div class="panel">
+  <div class="ph">
+    <span class="plbl">10 / EXCLUDE</span>
+    <span class="caret open" id="c-neg" onclick="tc('neg')">▾</span>
+  </div>
+  <div class="pb coll" id="s-neg">
+    <div class="nwrap" id="neg-chips"></div>
+    <input type="text" id="neg-inp" placeholder="+ add custom exclusion…"
+      style="width:100%;background:var(--raised);border:1px solid var(--bd);border-radius:7px;color:var(--tp);font-size:11.5px;padding:7px 11px;outline:none;font-family:'DM Sans',sans-serif;"
+      onkeydown="addNeg(event)">
+  </div>
+</div>
+
+<!-- 11. MODEL -->
+<div class="panel">
+  <div class="ph"><span class="plbl">11 / MODEL</span></div>
+  <div class="pb"><div class="mgrid" id="model-grid"></div></div>
+</div>
+
+<!-- GENERATE -->
+<div class="gz">
+  <button class="gbtn" id="gbtn" onclick="doGenerate()">
+    <div class="gspin" id="gspin"></div>
+    <span id="gtxt">⚡ Generate Music</span>
+  </button>
+  <div class="gprog" id="gprog"><div class="gbar" id="gbar"></div></div>
+</div>
+
+<!-- PLAYER -->
+<div class="player" id="player">
+  <div class="ptop">
+    <div class="tart" id="tart">🎵</div>
+    <div class="tinf">
+      <div class="ttitle" id="ttitle">—</div>
+      <div class="tmeta" id="tmeta">—</div>
+    </div>
+  </div>
+  <div class="waveform" id="waveform" onclick="togglePlay()"></div>
+  <div class="pctrl">
+    <button class="playbtn" id="playbtn" onclick="togglePlay()">▶</button>
+    <div class="ttxt" id="ttxt">0:00 / 0:00</div>
+  </div>
+  <div class="pbtns">
+    <button class="actbtn" onclick="doRegen()">🔁 Variation</button>
+    <button class="actbtn hl" onclick="saveTrack()">♡ Save</button>
+    <button class="actbtn" onclick="copyPr()">📋 Prompt</button>
+    <button class="actbtn" onclick="dlMock()">⬇ Export</button>
+  </div>
+</div>
+```
+
+  </div><!-- /tab-create -->
+
+  <!-- TAB: OPTIMIZE -->
+
+  <div class="tab" id="tab-optimize">
+    <div class="panel" style="margin-top:14px;">
+      <div class="ph"><span class="plbl on">PROMPT OPTIMIZER</span></div>
+      <div class="pb">
+        <p style="font-size:12.5px;color:var(--ts);margin-bottom:11px;line-height:1.6;">Paste any rough music idea. AI transforms it into a structured Lyria prompt using the official framework.</p>
+        <textarea class="pbox" id="opt2-inp" placeholder="e.g. something relaxing for a coffee shop, acoustic, not too fast" rows="4"></textarea>
+        <button class="optbtn" id="opt2-btn" onclick="doOpt2()" style="margin-top:9px;">
+          <div class="ospin" id="opt2-spin"></div>
+          <span id="opt2-lbl">✨ Optimize Prompt</span>
+        </button>
+        <div class="ores" id="opt2-res" style="margin-top:10px;">
+          <div class="orlbl">✦ Lyria-Optimized Prompt</div>
+          <div class="ortxt" id="opt2-txt"></div>
+          <button class="useopt" onclick="sendToCreate()">→ Send to Create tab</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:9px;margin:14px 0 9px;"><div class="sl"></div><span class="st">Prompt History</span><div class="sl"></div></div>
+        <div id="ph-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: LIBRARY -->
+
+  <div class="tab" id="tab-library">
+    <div class="panel" style="margin-top:14px;">
+      <div class="ph"><span class="plbl on">MY LIBRARY</span></div>
+      <div class="pb">
+        <div class="lgrid" id="lib-grid"></div>
+        <p id="lib-empty" style="font-size:12px;color:var(--tm);text-align:center;padding:22px 0;display:none;">No saved tracks yet.<br>Generate and save your first track!</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- BOTTOM NAV -->
+
+<nav class="bnav">
+  <div class="ni active" id="nav-create" onclick="showTab('create')">
+    <div class="nico">🎛️</div><div class="nlbl">CREATE</div>
+  </div>
+  <div class="ni" id="nav-optimize" onclick="showTab('optimize')">
+    <div class="nico">✨</div><div class="nlbl">OPTIMIZE</div>
+  </div>
+  <div class="ni" id="nav-library" onclick="showTab('library')">
+    <div class="nico">📚</div><div class="nlbl">LIBRARY</div>
+  </div>
+</nav>
+
+<script>
+// ── STATE ─────────────────────────────────────
+const S = {
+  vibes:[],genre:null,era:null,instruments:[],bpm:90,arc:'build',
+  vocalMode:'inst',vocalGender:'male',vocalTimbre:[],vocalLang:'en',
+  lyricsMode:'ai',negatives:[],model:'clip',
+  userPrompt:'',optimizedPrompt:'',
+  isPlaying:false,playProgress:0,playTimer:null,
+  savedTracks:[],promptHistory:[],currentTrack:null,
+};
+
+// ── DATA ──────────────────────────────────────
+const VIBES=[
+  {id:'chill',icon:'😌',label:'Chill'},{id:'epic',icon:'🔥',label:'Epic'},
+  {id:'dark',icon:'🌑',label:'Dark'},{id:'happy',icon:'☀️',label:'Happy'},
+  {id:'romantic',icon:'💫',label:'Romantic'},{id:'tense',icon:'⚡',label:'Tense'},
+  {id:'dreamy',icon:'🌊',label:'Dreamy'},{id:'energy',icon:'💥',label:'Energy'},
+];
+const GENRES=['Lo-fi','Hip-Hop','Electronic','Jazz','Ambient','Cinematic','Classical','R&B','Rock','Bossa Nova','Synthwave','Funk'];
+const ERAS=['80s Synth','90s Boom-Bap','Modern','Vintage','K-Pop','Neo-Soul','Baroque','Retro Future'];
+const INSTRS=[
+  {id:'piano',icon:'🎹',label:'Piano'},{id:'guitar',icon:'🎸',label:'Guitar'},
+  {id:'synth',icon:'🎛️',label:'Synth'},{id:'strings',icon:'🎻',label:'Strings'},
+  {id:'drums',icon:'🥁',label:'Drums'},{id:'bass',icon:'🎵',label:'Bass'},
+  {id:'brass',icon:'🎺',label:'Brass'},{id:'flute',icon:'🪈',label:'Flute'},
+  {id:'organ',icon:'🎼',label:'Organ'},{id:'harp',icon:'🎵',label:'Harp'},
+  {id:'violin',icon:'🎻',label:'Violin'},{id:'808',icon:'🔊',label:'808'},
+];
+const ARCS=[
+  {id:'flat',label:'Consistent',bars:[18,19,18,20,18,19,18,19]},
+  {id:'build',label:'Build Up',bars:[5,8,11,14,17,20,22,24]},
+  {id:'drop',label:'Drop',bars:[22,20,16,10,18,22,20,18]},
+  {id:'wave',label:'Wave',bars:[12,18,22,18,12,16,22,18]},
+  {id:'fade',label:'Fade Out',bars:[24,22,18,15,12,9,6,4]},
+  {id:'cold',label:'Cold Open',bars:[24,20,8,10,14,20,22,20]},
+];
+const TIMBRES=['Smooth','Breathy','Raspy','Soulful','Operatic','Airy','Warm','Gravelly'];
+const LANGS=[
+  {code:'en',label:'🇬🇧 EN'},{code:'es',label:'🇪🇸 ES'},{code:'fr',label:'🇫🇷 FR'},
+  {code:'de',label:'🇩🇪 DE'},{code:'ja',label:'🇯🇵 JA'},{code:'ko',label:'🇰🇷 KO'},
+  {code:'hi',label:'🇮🇳 HI'},{code:'pt',label:'🇧🇷 PT'},
+];
+const NEGS=['No Vocals','No Drums','No Bass','No Guitar','No Synth','No Brass','No Strings','No Distortion','No Reverb'];
+const MODELS=[
+  {id:'clip',badge:'LYRIA 3',name:'Quick Clip',desc:'30 sec · Fast · Great for prototyping'},
+  {id:'pro',badge:'LYRIA 3 PRO',name:'Full Track',desc:'Up to 3 min · Timestamp control · Best quality'},
+];
+const IDEAS=[
+  {tag:'Lo-fi · Jazz',txt:'"A late-night lo-fi jazz beat with muted trumpet, brushed drums, and dusty upright bass. Melancholy mood, ~80 BPM. Vinyl crackle ambiance."'},
+  {tag:'Cinematic · Epic',txt:'"A sweeping orchestral piece with brass fanfare and soaring strings. Heroic mood, builds from solo piano to full orchestra at 120 BPM."'},
+  {tag:'Synthwave · Dreamy',txt:'"Dreamy synthwave with lush pad layers and a soft arpeggio. Slow 75 BPM. Spacious reverb, nostalgic and introspective mood."'},
+  {tag:'Hip-Hop · Dark',txt:'"Dark trap beat with heavy 808 bass, eerie piano chords, sparse hi-hats. 140 BPM. Cold tense atmosphere, instrumental only."'},
+  {tag:'Ambient · Focus',txt:'"Peaceful ambient soundscape with layered synth pads and soft evolving textures. Very slow tempo, spacious reverb, perfect for focus."'},
+  {tag:'Bossa Nova · Romantic',txt:'"Romantic Bossa Nova fusion with nylon-string guitar, warm electric piano, gentle samba rhythm at 100 BPM. Intimate and warm."'},
+  {tag:'R&B · Chill',txt:'"Smooth modern R&B with warm keys, lush chord progression, slow groove at 85 BPM. Soulful and intimate, late-night city feel."'},
+  {tag:'Funk · Energetic',txt:'"High-energy funk with punchy horn section, slap bass, wah-wah guitar. Upbeat at 115 BPM with driving rhythm and joyful mood."'},
+];
+const MOCK_OPT=[
+  'An intimate lo-fi jazz instrumental. Melancholy, introspective mood. Features brushed acoustic drums, muted trumpet melody, dusty upright bass, warm piano chord stabs. Slow ~82 BPM, swaying laid-back groove. Spacious reverb, vinyl crackle ambiance, high-quality production. Negative: no vocals, no electric guitar, no loud dynamics.',
+  'A sweeping cinematic orchestral piece, heroic fantasy-adventure style. Grand, triumphant mood. Full orchestra: dramatic brass fanfare, soaring strings, powerful percussion. Starts quietly with solo piano, builds to full orchestral climax. 118 BPM, driving cinematic rhythm. Negative: no synths, no electric elements, no vocals.',
+  'Lush dreamy synthwave, nostalgic and ethereal mood. Layered analog synth pads, melodic arpeggio lead, soft electronic drums, subtle bass. Slow ~76 BPM, floating hypnotic groove. Spacious hall reverb, gentle stereo width. Negative: no vocals, no distortion, no sharp percussion.',
+  'Dark trap instrumental. Tense, cold atmosphere. Heavy 808 sub-bass, eerie detuned piano melody, sparse hi-hats, reversed snare fills. 142 BPM, aggressive rhythmic feel. Minimal arrangement with sudden dynamic drops. Negative: no vocals, no live instruments, no bright frequencies.',
+];
+const EMOJIS=['🎵','🎶','🎸','🎹','🎺','🎻','🥁','🎛️','🎼','🪗'];
+const NAMES=['Midnight Drift','Golden Hour','Neon Rain','Deep Current','Ember Lane','Velvet Static','Slow Burn','Arctic Echo','Hollow Ground','Signal Lost','Copper Wave','Dark Matter'];
+
+// ── INIT ──────────────────────────────────────
+window.addEventListener('DOMContentLoaded',()=>{
+  buildVibes();buildGenre();buildEra();buildInstrs();buildArcs();
+  buildTimbres();buildLangs();buildNegs();buildModels();
+  refreshIdeas();buildLibrary();updateLivePrompt();
+  document.getElementById('uprompt').addEventListener('input',updateLivePrompt);
+  document.getElementById('lbox').addEventListener('input',updateLivePrompt);
+  document.querySelectorAll('.coll').forEach(el=>{el.style.maxHeight=el.scrollHeight+'px';});
+});
+
+// ── BUILDERS ─────────────────────────────────
+function buildVibes(){
+  document.getElementById('vibe-grid').innerHTML=VIBES.map(v=>`
+    <div class="vc" id="vibe-${v.id}" onclick="toggleVibe('${v.id}')">
+      <span class="vi">${v.icon}</span><span class="vl">${v.label}</span>
+    </div>`).join('');
+}
+function buildGenre(){
+  document.getElementById('genre-chips').innerHTML=GENRES.map(g=>`
+    <div class="chip" onclick="selGenre('${g}')" id="g-${g.replace(/\s/g,'_')}">${g}</div>`).join('');
+}
+function buildEra(){
+  document.getElementById('era-chips').innerHTML=ERAS.map(e=>`
+    <div class="chip sm" onclick="selEra('${e}')" id="e-${e.replace(/\s/g,'_')}">${e}</div>`).join('');
+}
+function buildInstrs(){
+  document.getElementById('instr-grid').innerHTML=INSTRS.map(i=>`
+    <div class="ibut" id="i-${i.id}" onclick="togInstr('${i.id}')">
+      <span class="ii">${i.icon}</span><span class="il">${i.label}</span>
+    </div>`).join('');
+}
+function buildArcs(){
+  document.getElementById('arc-grid').innerHTML=ARCS.map(a=>`
+    <div class="abtn ${a.id===S.arc?'sel':''}" id="a-${a.id}" onclick="selArc('${a.id}')">
+      <div class="avis">${a.bars.map(h=>`<div class="ab" style="height:${h}px"></div>`).join('')}</div>
+      <div class="albl">${a.label}</div>
+    </div>`).join('');
+}
+function buildTimbres(){
+  document.getElementById('timbre-chips').innerHTML=TIMBRES.map(t=>`
+    <div class="chip sm" onclick="togTimbre('${t}')" id="t-${t}">${t}</div>`).join('');
+}
+function buildLangs(){
+  document.getElementById('lang-chips').innerHTML=LANGS.map(l=>`
+    <div class="chip sm ${l.code==='en'?'sel':''}" onclick="selLang('${l.code}')" id="l-${l.code}">${l.label}</div>`).join('');
+}
+function buildNegs(){
+  document.getElementById('neg-chips').innerHTML=NEGS.map(n=>`
+    <div class="nchip" onclick="togNeg('${n}')" id="n-${n.replace(/\s/g,'_')}">${n}</div>`).join('');
+}
+function buildModels(){
+  document.getElementById('model-grid').innerHTML=MODELS.map(m=>`
+    <div class="mcard ${m.id===S.model?'sel':''}" id="m-${m.id}" onclick="selModel('${m.id}')">
+      <span class="mbdg">${m.badge}</span>
+      <div class="mname">${m.name}</div>
+      <div class="mdesc">${m.desc}</div>
+    </div>`).join('');
+}
+function buildLibrary(){
+  const g=document.getElementById('lib-grid');
+  const e=document.getElementById('lib-empty');
+  if(!S.savedTracks.length){g.innerHTML='';e.style.display='block';return;}
+  e.style.display='none';
+  g.innerHTML=S.savedTracks.map((t,i)=>`
+    <div class="litem" onclick="loadTrack(${i})">
+      <div class="lart" style="background:${t.bg};">${t.emoji}</div>
+      <div class="lname">${t.name}</div>
+      <div class="lmeta">${t.genre||'?'} · ${t.model==='pro'?'3min':'30s'}</div>
+    </div>`).join('');
+}
+
+// ── INTERACTIONS ─────────────────────────────
+function toggleVibe(id){
+  const idx=S.vibes.indexOf(id);
+  if(idx>-1)S.vibes.splice(idx,1);else S.vibes.push(id);
+  document.querySelectorAll('.vc').forEach(el=>el.classList.remove('sel'));
+  S.vibes.forEach(v=>document.getElementById('vibe-'+v)?.classList.add('sel'));
+  updateLivePrompt();
+}
+function selGenre(g){
+  S.genre=S.genre===g?null:g;
+  document.querySelectorAll('#genre-chips .chip').forEach(el=>el.classList.remove('sel'));
+  if(S.genre)document.getElementById('g-'+g.replace(/\s/g,'_'))?.classList.add('sel');
+  updateLivePrompt();
+}
+function selEra(e){
+  S.era=S.era===e?null:e;
+  document.querySelectorAll('#era-chips .chip').forEach(el=>el.classList.remove('sel'));
+  if(S.era)document.getElementById('e-'+e.replace(/\s/g,'_'))?.classList.add('sel');
+  updateLivePrompt();
+}
+function togInstr(id){
+  const idx=S.instruments.indexOf(id);
+  if(idx>-1)S.instruments.splice(idx,1);else S.instruments.push(id);
+  document.getElementById('i-'+id)?.classList.toggle('sel');
+  updateLivePrompt();
+}
+function onTempo(v){
+  S.bpm=parseInt(v);
+  const map=[[40,60,'Meditative'],[60,80,'Slow'],[80,100,'Laid-back'],[100,115,'Moderate'],[115,130,'Upbeat'],[130,150,'Driving'],[150,175,'Fast'],[175,200,'Frantic']];
+  const lbl=map.find(([lo,hi])=>S.bpm>=lo&&S.bpm<hi)||map[map.length-1];
+  document.getElementById('tpill').textContent=lbl[2]+' · ~'+S.bpm+' BPM';
+  updateLivePrompt();
+}
+function selArc(id){
+  S.arc=id;
+  document.querySelectorAll('.abtn').forEach(el=>el.classList.remove('sel'));
+  document.getElementById('a-'+id)?.classList.add('sel');
+  updateLivePrompt();
+}
+function setVocal(mode){
+  S.vocalMode=mode;
+  document.getElementById('v-inst').classList.toggle('on',mode==='inst');
+  document.getElementById('v-voc').classList.toggle('on',mode==='voc');
+  document.getElementById('vsub').classList.toggle('show',mode==='voc');
+  updateLivePrompt();
+}
+function tvopt(el,g){
+  el.parentElement.querySelectorAll('.topt').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');
+  if(g==='g')S.vocalGender=el.dataset.v;
+  updateLivePrompt();
+}
+function togTimbre(t){
+  const idx=S.vocalTimbre.indexOf(t);
+  if(idx>-1)S.vocalTimbre.splice(idx,1);
+  else if(S.vocalTimbre.length<2)S.vocalTimbre.push(t);
+  document.querySelectorAll('#timbre-chips .chip').forEach(el=>el.classList.remove('sel'));
+  S.vocalTimbre.forEach(v=>document.getElementById('t-'+v)?.classList.add('sel'));
+  updateLivePrompt();
+}
+function selLang(code){
+  S.vocalLang=code;
+  document.querySelectorAll('#lang-chips .chip').forEach(el=>el.classList.remove('sel'));
+  document.getElementById('l-'+code)?.classList.add('sel');
+  updateLivePrompt();
+}
+function setLyr(el,mode){
+  el.parentElement.querySelectorAll('.topt').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');S.lyricsMode=mode;
+  const box=document.getElementById('lbox');
+  box.style.display=(mode==='theme'||mode==='custom')?'block':'none';
+  box.placeholder=mode==='theme'?'Describe the lyric theme…':'Paste your lyrics here…';
+  updateLivePrompt();
+}
+function togNeg(n){
+  const id='n-'+n.replace(/\s/g,'_');
+  const el=document.getElementById(id);
+  const idx=S.negatives.indexOf(n);
+  if(idx>-1){S.negatives.splice(idx,1);el?.classList.remove('sel');}
+  else{S.negatives.push(n);el?.classList.add('sel');}
+  updateLivePrompt();
+}
+function addNeg(e){
+  if(e.key!=='Enter')return;
+  const val=e.target.value.trim();if(!val)return;
+  S.negatives.push(val);
+  const wrap=document.getElementById('neg-chips');
+  const chip=document.createElement('div');
+  chip.className='nchip sel';chip.textContent=val;
+  chip.onclick=()=>{chip.remove();S.negatives=S.negatives.filter(x=>x!==val);updateLivePrompt();};
+  wrap.appendChild(chip);
+  e.target.value='';updateLivePrompt();
+}
+function selModel(id){
+  S.model=id;
+  document.querySelectorAll('.mcard').forEach(el=>el.classList.remove('sel'));
+  document.getElementById('m-'+id)?.classList.add('sel');
+}
+
+// ── LIVE PROMPT ───────────────────────────────
+function updateLivePrompt(){
+  const parts=[];
+  const g=[S.genre,S.era].filter(Boolean).join(' · ');
+  if(g)parts.push(`<span class="hl">[Genre]</span> ${g}`);
+  if(S.vibes.length){
+    const m=S.vibes.map(v=>VIBES.find(x=>x.id===v)?.label).join(', ');
+    parts.push(`<span class="hl">[Mood]</span> ${m}`);
+  }
+  if(S.instruments.length){
+    const ins=S.instruments.map(id=>INSTRS.find(x=>x.id===id)?.label).join(', ');
+    parts.push(`<span class="hl">[Instruments]</span> ${ins}`);
+  }
+  parts.push(`<span class="hl">[Tempo]</span> ~${S.bpm} BPM`);
+  const arc=ARCS.find(a=>a.id===S.arc);
+  if(arc)parts.push(`<span class="hl">[Arc]</span> ${arc.label}`);
+  if(S.vocalMode==='inst'){
+    parts.push(`<span class="hl">[Vocal]</span> <span class="dm">Instrumental only</span>`);
+  } else {
+    const tb=S.vocalTimbre.length?S.vocalTimbre.join(', ')+' ':'';
+    const lang=LANGS.find(l=>l.code===S.vocalLang)?.label||'EN';
+    parts.push(`<span class="hl">[Vocal]</span> ${tb}${S.vocalGender} · ${lang}`);
+    parts.push(`<span class="dm">[Lyrics] ${S.lyricsMode==='ai'?'AI-generated':S.lyricsMode==='theme'?'Theme-guided':'Custom'}</span>`);
+  }
+  const up=document.getElementById('uprompt')?.value?.trim();
+  if(up)parts.push(`<span class="hl">[Idea]</span> <span class="dm">"${up.substring(0,55)}…"</span>`);
+  if(S.negatives.length)parts.push(`<span class="hl">[Exclude]</span> <span style="color:var(--red);">${S.negatives.join(', ')}</span>`);
+  document.getElementById('lprev').innerHTML=parts.length?parts.join('<br>'):'<span class="dm">Select options above to build your prompt…</span>';
+}
+
+// ── IDEAS ─────────────────────────────────────
+let curIdeas=[];
+function refreshIdeas(){
+  curIdeas=[...IDEAS].sort(()=>Math.random()-.5).slice(0,3);
+  document.getElementById('ideas-list').innerHTML=curIdeas.map((idea,i)=>`
+    <div class="icard" onclick="useIdea(${i})">
+      <span class="itag">${idea.tag}</span>
+      <div class="itxt">${idea.txt}</div>
+    </div>`).join('');
+}
+function useIdea(i){
+  document.getElementById('uprompt').value=curIdeas[i].txt.replace(/^"|"$/g,'');
+  updateLivePrompt();toast('✦ Idea loaded');
+  document.getElementById('uprompt').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+// ── OPTIMIZE ─────────────────────────────────
+function buildOptimized(input){
+  const lo=input.toLowerCase();
+  if(lo.includes('jazz')||lo.includes('trumpet')||lo.includes('lofi')||lo.includes('lo-fi'))return MOCK_OPT[0];
+  if(lo.includes('orchestra')||lo.includes('epic')||lo.includes('cinematic'))return MOCK_OPT[1];
+  if(lo.includes('synth')||lo.includes('wave')||lo.includes('dream'))return MOCK_OPT[2];
+  if(lo.includes('trap')||lo.includes('dark')||lo.includes('hip'))return MOCK_OPT[3];
+  const g=S.genre||'lo-fi';
+  const m=S.vibes.length?S.vibes.map(v=>VIBES.find(x=>x.id===v)?.label).join(', ').toLowerCase():'calm, introspective';
+  const ins=S.instruments.length?S.instruments.map(id=>INSTRS.find(x=>x.id===id)?.label).join(', '):'piano, soft drums, bass';
+  const arc=ARCS.find(a=>a.id===S.arc);
+  const neg=S.negatives.length?'Negative: '+S.negatives.join(', ').toLowerCase()+'.':'Negative: no harsh distortion, no abrupt stops.';
+  return `A ${g} track with ${m} mood. Features ${ins} at ~${S.bpm} BPM. The arrangement ${arc?.label.toLowerCase()||'builds gradually'} throughout. High-quality stereo production, warm mixing. ${neg}`;
+}
+
+async function doOptimize(){
+  const input=document.getElementById('uprompt').value.trim();
+  if(!input){toast('Enter a prompt idea first');return;}
+  const btn=document.getElementById('optbtn');
+  const spin=document.getElementById('ospin');
+  const lbl=document.getElementById('obtnlbl');
+  btn.disabled=true;btn.classList.add('loading');spin.style.display='block';lbl.textContent='Optimizing…';
+  await delay(1600+Math.random()*700);
+  const opt=buildOptimized(input);
+  S.optimizedPrompt=opt;
+  addHistory(input,opt);
+  document.getElementById('ortxt').textContent=opt;
+  document.getElementById('ores').classList.add('show');
+  btn.disabled=false;btn.classList.remove('loading');spin.style.display='none';lbl.textContent='✨ Optimize with AI';
+  toast('✦ Prompt optimized');
+}
+
+async function doOpt2(){
+  const input=document.getElementById('opt2-inp').value.trim();
+  if(!input){toast('Enter a prompt to optimize');return;}
+  const btn=document.getElementById('opt2-btn');
+  const spin=document.getElementById('opt2-spin');
+  const lbl=document.getElementById('opt2-lbl');
+  btn.disabled=true;btn.classList.add('loading');spin.style.display='block';lbl.textContent='Optimizing…';
+  await delay(1700+Math.random()*800);
+  const opt=buildOptimized(input);
+  S.optimizedPrompt=opt;addHistory(input,opt);
+  document.getElementById('opt2-txt').textContent=opt;
+  document.getElementById('opt2-res').classList.add('show');
+  renderHistory();
+  btn.disabled=false;btn.classList.remove('loading');spin.style.display='none';lbl.textContent='✨ Optimize Prompt';
+  toast('✦ Prompt optimized');
+}
+
+function useOpt(){
+  document.getElementById('uprompt').value=S.optimizedPrompt;
+  updateLivePrompt();toast('✦ Optimized prompt applied');
+}
+function sendToCreate(){
+  document.getElementById('uprompt').value=S.optimizedPrompt;
+  showTab('create');updateLivePrompt();toast('✦ Sent to Create tab');
+}
+function addHistory(raw,opt){
+  S.promptHistory.unshift({raw,opt,time:new Date().toLocaleTimeString()});
+  if(S.promptHistory.length>6)S.promptHistory.pop();
+}
+function renderHistory(){
+  const el=document.getElementById('ph-list');if(!el)return;
+  if(!S.promptHistory.length){el.innerHTML='<p style="font-size:11.5px;color:var(--tm);text-align:center;padding:12px 0;">No history yet.</p>';return;}
+  el.innerHTML=S.promptHistory.map((h,i)=>`
+    <div style="margin-bottom:9px;padding:11px;background:var(--raised);border:1px solid var(--bd);border-radius:9px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+        <span style="font-family:'Space Mono',monospace;font-size:8.5px;color:var(--tm);">PROMPT ${S.promptHistory.length-i}</span>
+        <span style="font-family:'Space Mono',monospace;font-size:8.5px;color:var(--tm);">${h.time}</span>
+      </div>
+      <div style="font-size:11px;color:var(--ts);font-style:italic;margin-bottom:5px;">"${h.raw.substring(0,70)}${h.raw.length>70?'…':''}"</div>
+      <div style="font-size:10.5px;color:var(--tp);line-height:1.5;">${h.opt.substring(0,110)}…</div>
+    </div>`).join('');
+}
+
+// ── GENERATE ─────────────────────────────────
+async function doGenerate(){
+  const btn=document.getElementById('gbtn');
+  const spin=document.getElementById('gspin');
+  const txt=document.getElementById('gtxt');
+  const prog=document.getElementById('gprog');
+  const bar=document.getElementById('gbar');
+  btn.disabled=true;btn.classList.add('loading');spin.style.display='block';
+  txt.textContent='Generating…';prog.classList.add('show');bar.style.width='0%';
+  const dur=S.model==='pro'?4000:2200;
+  const steps=28;
+  for(let i=1;i<=steps;i++){
+    await delay(dur/steps);
+    bar.style.width=(i/steps*92)+'%';
+  }
+  await delay(350);bar.style.width='100%';await delay(350);
+  const emoji=EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
+  const name=NAMES[Math.floor(Math.random()*NAMES.length)];
+  const hue=Math.floor(Math.random()*55)+20;
+  const bg=`linear-gradient(135deg,hsl(${hue},75%,9%),hsl(${hue+18},55%,16%))`;
+  S.currentTrack={
+    emoji,name,bg,
+    genre:S.genre||'Unknown',model:S.model,bpm:S.bpm,arc:S.arc,
+    duration:S.model==='pro'?178:30,
+    prompt:buildOptimized(document.getElementById('uprompt').value||'AI generated'),
+  };
+  btn.disabled=false;btn.classList.remove('loading');spin.style.display='none';
+  txt.textContent='⚡ Generate Music';prog.classList.remove('show');bar.style.width='0%';
+  showPlayer(S.currentTrack);
+  toast('🎵 Track generated!');
+}
+
+function showPlayer(track){
+  const p=document.getElementById('player');
+  document.getElementById('tart').textContent=track.emoji;
+  document.getElementById('tart').style.background=track.bg;
+  document.getElementById('ttitle').textContent=track.name;
+  document.getElementById('tmeta').textContent=`${track.genre} · ${track.bpm} BPM · ${fmt(track.duration)}`;
+  document.getElementById('ttxt').textContent=`0:00 / ${fmt(track.duration)}`;
+  buildWaveform(58,track.duration);
+  p.classList.add('show');
+  p.scrollIntoView({behavior:'smooth',block:'nearest'});
+  S.isPlaying=false;S.playProgress=0;
+}
+
+// ── WAVEFORM ─────────────────────────────────
+function buildWaveform(bars){
+  const wf=document.getElementById('waveform');
+  const hs=Array.from({length:bars},()=>Math.floor(Math.random()*32)+7);
+  wf.innerHTML=hs.map((h,i)=>`<div class="wb" id="wb${i}" style="height:${h}px"></div>`).join('');
+  wf._n=hs.length;
+}
+function updWaveform(p){
+  const n=document.getElementById('waveform')._n||58;
+  const f=Math.floor(p*n);
+  for(let i=0;i<n;i++){
+    const el=document.getElementById('wb'+i);if(!el)continue;
+    el.className='wb'+(i<f?' done':i===f?' cur':'');
+  }
+}
+function togglePlay(){
+  if(!S.currentTrack)return;
+  S.isPlaying=!S.isPlaying;
+  document.getElementById('playbtn').textContent=S.isPlaying?'⏸':'▶';
+  if(S.isPlaying){
+    const dur=S.currentTrack.duration*1000;
+    const iv=180;const total=dur/iv;
+    let step=S.playProgress*total;
+    S.playTimer=setInterval(()=>{
+      step++;S.playProgress=step/total;
+      if(S.playProgress>=1){
+        S.playProgress=0;S.isPlaying=false;
+        document.getElementById('playbtn').textContent='▶';
+        clearInterval(S.playTimer);
+      }
+      const el=S.playProgress*S.currentTrack.duration;
+      document.getElementById('ttxt').textContent=`${fmt(Math.floor(el))} / ${fmt(S.currentTrack.duration)}`;
+      updWaveform(S.playProgress);
+    },iv);
+  } else {
+    clearInterval(S.playTimer);
+  }
+}
+function doRegen(){if(S.playTimer)clearInterval(S.playTimer);S.isPlaying=false;S.playProgress=0;document.getElementById('playbtn').textContent='▶';doGenerate();}
+function saveTrack(){if(!S.currentTrack)return;S.savedTracks.unshift({...S.currentTrack});buildLibrary();toast('♡ Saved to Library');}
+function loadTrack(i){S.currentTrack={...S.savedTracks[i]};showTab('create');showPlayer(S.currentTrack);}
+function copyPr(){if(navigator.clipboard)navigator.clipboard.writeText(S.currentTrack?.prompt||'');toast('📋 Prompt copied');}
+function dlMock(){toast('⬇ Export ready (mock mode)');}
+
+// ── TABS ─────────────────────────────────────
+function showTab(tab){
+  ['create','optimize','library'].forEach(t=>{
+    document.getElementById('tab-'+t)?.classList.toggle('active',t===tab);
+    document.getElementById('nav-'+t)?.classList.toggle('active',t===tab);
+  });
+  if(tab==='library')buildLibrary();
+  if(tab==='optimize')renderHistory();
+}
+
+// ── COLLAPSE ─────────────────────────────────
+const SM={genre:'s-genre',instr:'s-instr',tempo:'s-tempo',arc:'s-arc',vocal:'s-vocal',ideas:'s-ideas',prev:'s-prev',neg:'s-neg'};
+function tc(key){
+  const el=document.getElementById(SM[key]);
+  const caret=document.getElementById('c-'+key);
+  if(!el)return;
+  const closing=!el.classList.contains('closed');
+  if(closing){
+    el.style.maxHeight=el.scrollHeight+'px';
+    requestAnimationFrame(()=>{el.style.maxHeight='0px';el.classList.add('closed');});
+  } else {
+    el.classList.remove('closed');
+    el.style.maxHeight=el.scrollHeight+500+'px';
+    setTimeout(()=>{el.style.maxHeight='none';},320);
+  }
+  caret?.classList.toggle('open',!closing);
+}
+
+// ── TOAST ─────────────────────────────────────
+function toast(msg,d=2100){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),d);
+}
+
+// ── UTILS ─────────────────────────────────────
+function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+function fmt(s){const m=Math.floor(s/60);return`${m}:${Math.floor(s%60).toString().padStart(2,'0')}`;}
+</script>
+
+</body>
+</html>
