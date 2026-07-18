@@ -1,0 +1,194 @@
+{
+  "typography": [
+    {
+      "role": "label",
+      "fontFamily": "‘Space Mono’",
+      "fontSize": "8.5px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "1.02px",
+      "color": "#F0ECE4",
+      "sampleText": "MOCK MODE"
+    }
+  ],
+  "spacing": {
+    "observed": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      13,
+      15,
+      16
+    ],
+    "baseUnit": 8
+  },
+  "radius": [
+    "8px",
+    "9px",
+    "10px",
+    "11px",
+    "999px"
+  ],
+  "shadows": [],
+  "buttons": [
+    {
+      "label": "📚",
+      "background": "#EFEFEF",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#000000",
+      "padding": "0px",
+      "borderRadius": "8px",
+      "border": "2px outset rgb(0, 0, 0)",
+      "boxShadow": "none",
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "height": "33px"
+    },
+    {
+      "label": "✨ Optimize with AI",
+      "background": "transparent",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#000000",
+      "padding": "9px 16px",
+      "borderRadius": "9px",
+      "border": "2px outset rgb(0, 0, 0)",
+      "boxShadow": "none",
+      "fontSize": "12.5px",
+      "fontWeight": "500",
+      "height": "37px"
+    },
+    {
+      "label": "↻Refresh ideas",
+      "background": "transparent",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#000000",
+      "padding": "6px 0px 0px",
+      "borderRadius": "0px",
+      "border": "0px none rgb(0, 0, 0)",
+      "boxShadow": "none",
+      "fontSize": "11px",
+      "fontWeight": "400",
+      "height": "19px"
+    },
+    {
+      "label": "⚡ Generate Music",
+      "background": "#EFEFEF",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#000000",
+      "padding": "18px",
+      "borderRadius": "15px",
+      "border": "0px none rgb(0, 0, 0)",
+      "boxShadow": "none",
+      "fontSize": "13.5px",
+      "fontWeight": "700",
+      "height": "52px"
+    }
+  ],
+  "cards": [
+    {
+      "label": "card",
+      "background": "transparent",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#F0ECE4",
+      "padding": "0px",
+      "borderRadius": "15px",
+      "border": "0px none rgb(240, 236, 228)",
+      "boxShadow": "none",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "height": "181px"
+    },
+    {
+      "label": "card",
+      "background": "#FFFFFF",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#000000",
+      "padding": "12px 14px",
+      "borderRadius": "11px",
+      "border": "1px solid rgb(118, 118, 118)",
+      "boxShadow": "none",
+      "fontSize": "13px",
+      "fontWeight": "400",
+      "height": "88.3906px"
+    }
+  ],
+  "nav": {
+    "label": "navigation",
+    "background": "#080808",
+    "backgroundImage": "",
+    "backdropFilter": "blur(20px)",
+    "color": "#F0ECE4",
+    "padding": "16px 18px 13px",
+    "borderRadius": "0px",
+    "border": "0px none rgb(240, 236, 228)",
+    "boxShadow": "none",
+    "fontSize": "16px",
+    "fontWeight": "400",
+    "height": "62px"
+  },
+  "chips": [
+    {
+      "label": "MOCK MODE",
+      "background": "transparent",
+      "color": "#F0ECE4",
+      "padding": "3px 9px",
+      "borderRadius": "999px",
+      "border": "0px none rgb(240, 236, 228)",
+      "boxShadow": "none",
+      "fontSize": "8.5px",
+      "fontWeight": "400",
+      "height": "16px"
+    },
+    {
+      "label": "Synthwave · Dreamy",
+      "background": "transparent",
+      "color": "#F0ECE4",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "border": "0px none rgb(240, 236, 228)",
+      "boxShadow": "none",
+      "fontSize": "8px",
+      "fontWeight": "400",
+      "height": "9px"
+    }
+  ],
+  "statCells": [],
+  "tabs": [],
+  "backgrounds": [
+    {
+      "value": "radial-gradient(rgba(245, 166, 35, 0.05) 0%, rgba(0, 0, 0, 0) 70%)",
+      "area": 350000
+    }
+  ],
+  "glass": [
+    {
+      "backdropFilter": "blur(20px)",
+      "background": "rgba(8, 8, 8, 0.92)",
+      "border": "0px none rgb(240, 236, 228)",
+      "borderRadius": "0px",
+      "boxShadow": "",
+      "area": 119040
+    },
+    {
+      "backdropFilter": "blur(20px)",
+      "background": "rgba(9, 9, 9, 0.95)",
+      "border": "0px none rgb(240, 236, 228)",
+      "borderRadius": "0px",
+      "boxShadow": "",
+      "area": 111360
+    }
+  ]
+}
