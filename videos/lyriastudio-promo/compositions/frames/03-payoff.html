@@ -17,7 +17,7 @@
           font-family: "Unbounded", sans-serif;
           --ink-black: #080808;
           --cream: #f0ece4;
-          --cream-hint: #5a5550;
+          --cream-hint: #827e79;
           --fire-orange: #f5a623;
         }
 
@@ -159,7 +159,7 @@
         </div>
       </div>
 
-      <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+      <script src="assets/vendor/gsap.min.js"></script>
       <script>
         (function () {
           window.__timelines = window.__timelines || {};
@@ -192,6 +192,7 @@
             { opacity: 0, scale: 0.92, duration: 0.3, ease: "power2.in" },
             3.5,
           );
+          tl.set("#fr03-line2-wrap", { opacity: 0 }, 3.8);
 
           // ---- Scene 3: closing wordmark ----
           // Spring-pop entrance, smooth long-tail settle (no bounce — project motion grammar).

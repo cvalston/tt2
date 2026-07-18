@@ -16,7 +16,7 @@ colors:
   fire-orange: "#F5A623"
   cream: "#F0ECE4"
   cream-muted: "#9A9490"
-  cream-hint: "#5A5550"
+  cream-hint: "#827E79"
   border-dark: "#252525"
   ink-on-orange-muted: "rgba(8,8,8,0.75)"
   ink-on-orange-hint: "rgba(8,8,8,0.55)"

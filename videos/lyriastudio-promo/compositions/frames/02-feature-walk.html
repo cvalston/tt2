@@ -1,0 +1,595 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>02-feature-walk (sub-composition source)</title>
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face {
+          font-family: "Unbounded";
+          src: url("assets/fonts/Yq6F-LOTXCb04q32xlpat-6uR42XTqtG6xjx040.ttf") format("truetype");
+          font-weight: 400;
+          font-style: normal;
+          font-display: block;
+        }
+        @font-face {
+          font-family: "Unbounded";
+          src: url("assets/fonts/Yq6F-LOTXCb04q32xlpat-6uR42XTqtG68b2040.ttf") format("truetype");
+          font-weight: 600;
+          font-style: normal;
+          font-display: block;
+        }
+        @font-face {
+          font-family: "Unbounded";
+          src: url("assets/fonts/Yq6F-LOTXCb04q32xlpat-6uR42XTqtG6__2040.ttf") format("truetype");
+          font-weight: 700;
+          font-style: normal;
+          font-display: block;
+        }
+        @font-face {
+          font-family: "Space Mono";
+          src: url("assets/fonts/i7dPIFZifjKcF5UAWdDRUEY.ttf") format("truetype");
+          font-weight: 400;
+          font-style: normal;
+          font-display: block;
+        }
+        @font-face {
+          font-family: "Space Mono";
+          src: url("assets/fonts/i7dMIFZifjKcF5UAWdDRaPpZYFI.ttf") format("truetype");
+          font-weight: 700;
+          font-style: normal;
+          font-display: block;
+        }
+        @font-face {
+          font-family: "DM Sans";
+          src: url("assets/fonts/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwA_JxhTg.ttf")
+            format("truetype");
+          font-weight: 300;
+          font-style: normal;
+          font-display: block;
+        }
+        @font-face {
+          font-family: "DM Sans";
+          src: url("assets/fonts/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAopxhTg.ttf")
+            format("truetype");
+          font-weight: 400;
+          font-style: normal;
+          font-display: block;
+        }
+        @font-face {
+          font-family: "DM Sans";
+          src: url("assets/fonts/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAkJxhTg.ttf")
+            format("truetype");
+          font-weight: 500;
+          font-style: normal;
+          font-display: block;
+        }
+
+        #root {
+          position: absolute;
+          inset: 0;
+          width: 1920px;
+          height: 1080px;
+          overflow: hidden;
+          font-family: "DM Sans", sans-serif;
+          color: #f0ece4;
+        }
+
+        /* full-bleed ground — a dedicated class="clip" layer, NOT a background on #root
+           itself (see hyperframes-core: root background can be dropped by frame compositing). */
+        .f02-bg {
+          position: absolute;
+          inset: 0;
+          background: #080808;
+        }
+
+        /* ---- camera rig: outer handles a cosmetic settle-scale only (tail beat),
+               inner .f02-world handles the vertical pan between the four panels ---- */
+        .f02-camera {
+          position: absolute;
+          inset: 0;
+          transform-origin: 50% 50%;
+          will-change: transform;
+        }
+        .f02-world {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1920px;
+          will-change: transform;
+        }
+
+        .f02-panel {
+          position: relative;
+          width: 1920px;
+          height: 1080px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: flex-start;
+          padding: 84px 130px 0;
+          box-sizing: border-box;
+        }
+        .f02-plabel {
+          font-family: "Space Mono", monospace;
+          font-weight: 700;
+          font-size: 22px;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: #f5a623;
+          margin-bottom: 6px;
+        }
+        .f02-prule {
+          width: 36px;
+          height: 2px;
+          background: #f5a623;
+          margin-bottom: 40px;
+        }
+        .f02-pdim {
+          font-family: "Space Mono", monospace;
+          font-weight: 500;
+          font-size: 18px;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: #827e79;
+          margin-top: 56px;
+        }
+
+        /* ---- 01 / VIBE grid ---- */
+        .f02-vibe-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 22px;
+          width: 1660px;
+        }
+        .f02-vibe-tile {
+          position: relative;
+          height: 168px;
+          border: 1px solid #252525;
+          background: #111111;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 14px;
+          transform-origin: 50% 50%;
+          will-change: transform;
+        }
+        .f02-vibe-tile .glyph {
+          font-size: 46px;
+          line-height: 1;
+        }
+        .f02-vibe-tile .label {
+          font-family: "Space Mono", monospace;
+          font-weight: 500;
+          font-size: 19px;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: #9a9490;
+        }
+        .f02-vibe-tile .glow {
+          position: absolute;
+          inset: -2px;
+          border: 2px solid #f5a623;
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        /* ---- 03 / INSTRUMENTS grid ---- */
+        .f02-instr-grid {
+          display: grid;
+          grid-template-columns: repeat(6, 1fr);
+          gap: 22px;
+          width: 1660px;
+        }
+        .f02-instr-tile {
+          position: relative;
+          height: 148px;
+          border: 1px solid #252525;
+          background: #111111;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          transform-origin: 50% 50%;
+          will-change: transform;
+        }
+        .f02-instr-tile .glyph {
+          font-size: 36px;
+          line-height: 1;
+        }
+        .f02-instr-tile .label {
+          font-family: "Space Mono", monospace;
+          font-weight: 500;
+          font-size: 16px;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: #9a9490;
+        }
+        .f02-instr-tile .glow {
+          position: absolute;
+          inset: -2px;
+          border: 2px solid #f5a623;
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        /* ---- 04 / TEMPO strip ---- */
+        .f02-tempo-strip {
+          width: 1660px;
+          margin-top: 40px;
+        }
+        .f02-tempo-readout {
+          font-family: "Unbounded", sans-serif;
+          font-weight: 700;
+          font-size: 52px;
+          letter-spacing: -0.02em;
+          color: #f0ece4;
+          margin-bottom: 44px;
+        }
+        .f02-tempo-readout .bpm-unit {
+          color: #f5a623;
+        }
+        .f02-tempo-track {
+          position: relative;
+          width: 100%;
+          height: 6px;
+          background: #252525;
+        }
+        .f02-tempo-fill {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background: #f5a623;
+          transform: scaleX(0.2417);
+          transform-origin: left center;
+        }
+        .f02-tempo-thumb {
+          position: absolute;
+          top: 50%;
+          left: 24.17%;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          background: #f5a623;
+          transform: translate(-50%, -50%);
+          box-shadow: 0 0 0 6px rgba(245, 166, 35, 0.18);
+        }
+        .f02-tempo-ends {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 22px;
+          font-family: "Space Mono", monospace;
+          font-weight: 500;
+          font-size: 16px;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: #827e79;
+        }
+
+        /* ---- 05 / ENERGY ARC ---- */
+        .f02-arc-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 22px;
+          width: 1660px;
+        }
+        .f02-arc-btn {
+          position: relative;
+          height: 158px;
+          border: 1px solid #252525;
+          background: #111111;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 20px;
+          transform-origin: 50% 50%;
+          will-change: transform;
+        }
+        .f02-arc-btn .bars {
+          display: flex;
+          align-items: flex-end;
+          gap: 5px;
+          height: 46px;
+        }
+        .f02-arc-btn .bars i {
+          display: block;
+          width: 8px;
+          background: #5a5550;
+        }
+        .f02-arc-btn .label {
+          font-family: "Space Mono", monospace;
+          font-weight: 700;
+          font-size: 19px;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: #9a9490;
+        }
+        .f02-arc-btn .glow {
+          position: absolute;
+          inset: -2px;
+          border: 2px solid #f5a623;
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        /* ---- cursor ---- */
+        .f02-cursor {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 34px;
+          height: 34px;
+          pointer-events: none;
+          z-index: 999;
+          will-change: transform;
+        }
+        .f02-cursor svg {
+          display: block;
+          filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.55));
+        }
+        .f02-cursor-inner {
+          transform-origin: 6px 4px;
+        }
+
+        /* ---- ripple ---- */
+        .f02-ripple {
+          position: absolute;
+          left: -60px;
+          top: -60px;
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          border: 2px solid #f5a623;
+          opacity: 0;
+          pointer-events: none;
+          z-index: 998;
+        }
+      </style>
+
+      <div id="root" data-composition-id="02-feature-walk" data-width="1920" data-height="1080" data-duration="9.5">
+        <div
+          class="f02-bg clip"
+          data-start="0"
+          data-duration="9.5"
+          data-track-index="0"
+        ></div>
+
+        <div class="f02-camera" id="f02-camera">
+          <div class="f02-world" id="f02-world">
+            <!-- Panel 1 — 01 / VIBE (natural flow top: 0px) -->
+            <div class="f02-panel" id="f02-panel-vibe">
+              <div class="f02-plabel">01 / VIBE</div>
+              <div class="f02-prule"></div>
+              <div class="f02-vibe-grid" id="f02-vibe-grid">
+                <div class="f02-vibe-tile" id="f02-vibe-chill"><div class="glow"></div><span class="glyph">😌</span><span class="label">Chill</span></div>
+                <div class="f02-vibe-tile" id="f02-vibe-epic"><div class="glow"></div><span class="glyph">🔥</span><span class="label">Epic</span></div>
+                <div class="f02-vibe-tile" id="f02-vibe-dark"><div class="glow"></div><span class="glyph">🌑</span><span class="label">Dark</span></div>
+                <div class="f02-vibe-tile" id="f02-vibe-happy"><div class="glow"></div><span class="glyph">☀️</span><span class="label">Happy</span></div>
+                <div class="f02-vibe-tile" id="f02-vibe-romantic"><div class="glow"></div><span class="glyph">💫</span><span class="label">Romantic</span></div>
+                <div class="f02-vibe-tile" id="f02-vibe-tense"><div class="glow"></div><span class="glyph">⚡</span><span class="label">Tense</span></div>
+                <div class="f02-vibe-tile" id="f02-vibe-dreamy"><div class="glow"></div><span class="glyph">🌊</span><span class="label">Dreamy</span></div>
+                <div class="f02-vibe-tile" id="f02-vibe-energy"><div class="glow"></div><span class="glyph">💥</span><span class="label">Energy</span></div>
+              </div>
+              <div class="f02-pdim">03 / instruments &nbsp;·&nbsp; 04 / tempo &nbsp;·&nbsp; 05 / energy arc</div>
+            </div>
+
+            <!-- Panel 2 — 03 / INSTRUMENTS (natural flow top: 1080px) -->
+            <div class="f02-panel" id="f02-panel-instr">
+              <div class="f02-plabel">03 / INSTRUMENTS</div>
+              <div class="f02-prule"></div>
+              <div class="f02-instr-grid" id="f02-instr-grid">
+                <div class="f02-instr-tile" id="f02-instr-piano"><div class="glow"></div><span class="glyph">🎹</span><span class="label">Piano</span></div>
+                <div class="f02-instr-tile" id="f02-instr-guitar"><div class="glow"></div><span class="glyph">🎸</span><span class="label">Guitar</span></div>
+                <div class="f02-instr-tile" id="f02-instr-synth"><div class="glow"></div><span class="glyph">🎛️</span><span class="label">Synth</span></div>
+                <div class="f02-instr-tile" id="f02-instr-strings"><div class="glow"></div><span class="glyph">🎻</span><span class="label">Strings</span></div>
+                <div class="f02-instr-tile" id="f02-instr-drums"><div class="glow"></div><span class="glyph">🥁</span><span class="label">Drums</span></div>
+                <div class="f02-instr-tile" id="f02-instr-bass"><div class="glow"></div><span class="glyph">🎵</span><span class="label">Bass</span></div>
+              </div>
+            </div>
+
+            <!-- Panel 3 — 04 / TEMPO (natural flow top: 2160px) -->
+            <div class="f02-panel" id="f02-panel-tempo" style="justify-content: center">
+              <div class="f02-plabel">04 / TEMPO</div>
+              <div class="f02-prule"></div>
+              <div class="f02-tempo-strip">
+                <div class="f02-tempo-readout">
+                  <span id="f02-tempo-word">Laid-back</span> · ~<span id="f02-tempo-bpm">90</span><span class="bpm-unit">&nbsp;BPM</span>
+                </div>
+                <div class="f02-tempo-track" id="f02-tempo-track">
+                  <div class="f02-tempo-fill" id="f02-tempo-fill"></div>
+                  <div class="f02-tempo-thumb" id="f02-tempo-thumb"></div>
+                </div>
+                <div class="f02-tempo-ends"><span>Slow</span><span>Fast</span></div>
+              </div>
+            </div>
+
+            <!-- Panel 4 — 05 / ENERGY ARC (natural flow top: 3240px) -->
+            <div class="f02-panel" id="f02-panel-arc" style="justify-content: center">
+              <div class="f02-plabel">05 / ENERGY ARC</div>
+              <div class="f02-prule"></div>
+              <div class="f02-arc-grid" id="f02-arc-grid">
+                <div class="f02-arc-btn" id="f02-arc-consistent"><div class="glow"></div><div class="bars"><i style="height:18px"></i><i style="height:19px"></i><i style="height:18px"></i><i style="height:20px"></i><i style="height:18px"></i><i style="height:19px"></i></div><span class="label">Consistent</span></div>
+                <div class="f02-arc-btn" id="f02-arc-build"><div class="glow"></div><div class="bars"><i style="height:6px"></i><i style="height:10px"></i><i style="height:15px"></i><i style="height:20px"></i><i style="height:26px"></i><i style="height:32px"></i></div><span class="label">Build Up</span></div>
+                <div class="f02-arc-btn" id="f02-arc-drop"><div class="glow"></div><div class="bars"><i style="height:28px"></i><i style="height:24px"></i><i style="height:14px"></i><i style="height:30px"></i><i style="height:26px"></i><i style="height:22px"></i></div><span class="label">Drop</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- cursor + ripple ride in fixed screen space, above the camera/world transform -->
+        <div class="f02-ripple" id="f02-ripple"></div>
+        <div class="f02-cursor" id="f02-cursor">
+          <svg width="34" height="34" viewBox="0 0 24 24">
+            <g class="f02-cursor-inner" id="f02-cursor-inner">
+              <path d="M5 3L19 12L12 13L9 20L5 3Z" fill="#F5A623" stroke="#080808" stroke-width="1.2" />
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <script src="assets/vendor/gsap.min.js"></script>
+      <script>
+        (function () {
+          window.__timelines = window.__timelines || {};
+          var tl = gsap.timeline({ paused: true });
+
+          var root = document.getElementById("root");
+          var world = document.getElementById("f02-world");
+          var camera = document.getElementById("f02-camera");
+          var cursor = document.getElementById("f02-cursor");
+          var cursorInner = document.getElementById("f02-cursor-inner");
+          var ripple = document.getElementById("f02-ripple");
+
+          // Panel top-Y in world/document space — matches the natural (untransformed)
+          // stacking order of the four .f02-panel blocks (each 1080px tall).
+          var PANEL = { vibe: 0, instr: 1080, tempo: 2160, arc: 3240 };
+
+          // ---- Measure real geometry ONCE, at setup, while world/camera are still
+          // identity transforms (no gsap.set/to has run yet) — see coordinate-target-zoom
+          // rule: bake offsets from getBoundingClientRect, never hand-derive or re-measure
+          // per frame. rects below are in natural (pre-pan) document space.
+          var rootR = root.getBoundingClientRect();
+          function centerOf(id) {
+            var r = document.getElementById(id).getBoundingClientRect();
+            return { x: r.left - rootR.left + r.width / 2, y: r.top - rootR.top + r.height / 2 };
+          }
+          var epicC = centerOf("f02-vibe-epic");
+          var synthC = centerOf("f02-instr-synth");
+          var drumsC = centerOf("f02-instr-drums");
+          var buildC = centerOf("f02-arc-build");
+          var trackR = document.getElementById("f02-tempo-track").getBoundingClientRect();
+          var trackLocal = {
+            left: trackR.left - rootR.left,
+            centerY: trackR.top - rootR.top + trackR.height / 2,
+            width: trackR.width,
+          };
+
+          // Convert a natural (panel-local) point to on-screen coords once the world
+          // has panned so that `panelTop` sits at the top of the viewport.
+          function onScreen(pt, panelTop) {
+            return { x: pt.x, y: pt.y - panelTop };
+          }
+
+          // ---- initial state ----
+          gsap.set(world, { y: 0 });
+          gsap.set(camera, { scale: 1 });
+          gsap.set(cursor, { x: -50, y: 1180 }); // off-frame, bottom-left of panel 1
+          gsap.set(ripple, { opacity: 0, scale: 0 });
+
+          function moveCursor(pt, at, dur, ease) {
+            tl.to(cursor, { x: pt.x - 6, y: pt.y - 4, duration: dur, ease: ease || "power2.inOut" }, at);
+          }
+
+          function panTo(panelTop, at, dur) {
+            tl.to(world, { y: -panelTop, duration: dur, ease: "power4.inOut" }, at);
+          }
+
+          // Outline-select (vibe / instrument tiles): press-compress + amber glow ring + ripple.
+          // Only allowlisted props are tweened (opacity, scale) — never className/borderColor.
+          function selectOutline(elId, pt, at) {
+            var el = document.getElementById(elId);
+            var glow = el.querySelector(".glow");
+            tl.to(cursorInner, { scale: 0.8, duration: 0.07, ease: "power2.in", yoyo: true, repeat: 1 }, at);
+            tl.fromTo(el, { scale: 1 }, { scale: 0.96, duration: 0.09, ease: "power1.in", yoyo: true, repeat: 1 }, at + 0.04);
+            tl.fromTo(glow, { opacity: 0 }, { opacity: 1, duration: 0.22, ease: "power2.out" }, at + 0.05);
+            tl.set(ripple, { x: pt.x, y: pt.y, scale: 0, opacity: 1 }, at + 0.05);
+            tl.to(ripple, { scale: 2.6, opacity: 0, duration: 0.5, ease: "power2.out" }, at + 0.06);
+          }
+
+          // Fill-select (energy-arc button): spring pop + amber fill + dark text/bars + glow + ripple.
+          function selectFill(elId, pt, at) {
+            var el = document.getElementById(elId);
+            var glow = el.querySelector(".glow");
+            var label = el.querySelector(".label");
+            var bars = el.querySelectorAll(".bars i");
+            tl.to(cursorInner, { scale: 0.8, duration: 0.08, ease: "power2.in", yoyo: true, repeat: 1 }, at);
+            tl.fromTo(el, { scale: 1 }, { scale: 1.05, duration: 0.16, ease: "power2.out", yoyo: true, repeat: 1 }, at + 0.05);
+            tl.to(el, { backgroundColor: "#F5A623", duration: 0.18, ease: "power2.out" }, at + 0.06);
+            tl.to(label, { color: "rgba(8,8,8,0.75)", duration: 0.18, ease: "power2.out" }, at + 0.06);
+            tl.to(bars, { backgroundColor: "rgba(8,8,8,0.75)", duration: 0.18, ease: "power2.out" }, at + 0.06);
+            tl.fromTo(glow, { opacity: 0 }, { opacity: 1, duration: 0.22, ease: "power2.out" }, at + 0.06);
+            tl.set(ripple, { x: pt.x, y: pt.y, scale: 0, opacity: 1 }, at + 0.06);
+            tl.to(ripple, { scale: 3.2, opacity: 0, duration: 0.55, ease: "power2.out" }, at + 0.07);
+          }
+
+          // ================= SCENE 1 (0.0-1.8s) — 01/VIBE, cursor enters, clicks Epic =================
+          moveCursor({ x: 1120, y: 60 }, 0.05, 0.5, "power3.out");
+          moveCursor(onScreen(epicC, PANEL.vibe), 0.55, 0.42);
+          selectOutline("f02-vibe-epic", onScreen(epicC, PANEL.vibe), 1.0);
+          tl.to(
+            ["#f02-vibe-chill", "#f02-vibe-dark", "#f02-vibe-happy", "#f02-vibe-romantic", "#f02-vibe-tense", "#f02-vibe-dreamy", "#f02-vibe-energy"],
+            { opacity: 0.55, duration: 0.3, ease: "power2.out" },
+            1.18
+          );
+
+          // ================= SCENE 2 (1.8-4.0s) — whip-pan to 03/INSTRUMENTS, click Synth, Drums =================
+          panTo(PANEL.instr, 1.8, 0.5);
+          moveCursor(onScreen(synthC, PANEL.instr), 2.3, 0.4);
+          selectOutline("f02-instr-synth", onScreen(synthC, PANEL.instr), 2.72);
+          moveCursor(onScreen(drumsC, PANEL.instr), 3.12, 0.35);
+          selectOutline("f02-instr-drums", onScreen(drumsC, PANEL.instr), 3.5);
+
+          // ================= SCENE 3 (4.0-6.4s) — pan to 04/TEMPO, drag the slider thumb =================
+          panTo(PANEL.tempo, 4.0, 0.5);
+          var grabPt = onScreen({ x: trackLocal.left + 0.2417 * trackLocal.width, y: trackLocal.centerY }, PANEL.tempo);
+          moveCursor(grabPt, 4.55, 0.4);
+          tl.to(cursorInner, { scale: 0.85, duration: 0.1, ease: "power2.in" }, 4.95);
+
+          var thumbEl = document.getElementById("f02-tempo-thumb");
+          var fillEl = document.getElementById("f02-tempo-fill");
+          var wordEl = document.getElementById("f02-tempo-word");
+          var bpmEl = document.getElementById("f02-tempo-bpm");
+          var drag = { p: 0.2417 };
+          tl.to(
+            drag,
+            {
+              p: 0.62,
+              duration: 1.1,
+              ease: "power2.inOut",
+              onUpdate: function () {
+                thumbEl.style.left = drag.p * 100 + "%";
+                fillEl.style.transform = "scaleX(" + drag.p + ")";
+                var bpm = Math.round(40 + drag.p * (200 - 40));
+                bpmEl.textContent = bpm;
+                var word =
+                  bpm < 60 ? "Meditative" :
+                  bpm < 80 ? "Slow" :
+                  bpm < 100 ? "Laid-back" :
+                  bpm < 115 ? "Moderate" :
+                  bpm < 130 ? "Upbeat" :
+                  bpm < 150 ? "Driving" :
+                  bpm < 175 ? "Fast" : "Frantic";
+                wordEl.textContent = word;
+              },
+            },
+            5.05
+          );
+          tl.to(
+            cursor,
+            { x: trackLocal.left + 0.62 * trackLocal.width - 6, duration: 1.1, ease: "power2.inOut" },
+            5.05
+          );
+          tl.to(cursorInner, { scale: 1, duration: 0.15, ease: "power2.out" }, 6.1);
+
+          // ================= SCENE 4 (6.4-9.0s) — pan to 05/ENERGY ARC, click "Build Up", HOLD =================
+          panTo(PANEL.arc, 6.4, 0.5);
+          moveCursor(onScreen(buildC, PANEL.arc), 6.95, 0.35, "back.out(1.2)");
+          selectFill("f02-arc-build", onScreen(buildC, PANEL.arc), 7.3);
+
+          // camera comes to rest — a barely-perceptible settle scale sells "static hold";
+          // fires only after every measurement-dependent move above has already landed.
+          tl.to(camera, { scale: 1.015, duration: 0.7, ease: "power2.out" }, 7.9);
+
+          window.__timelines["02-feature-walk"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>
