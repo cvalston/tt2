@@ -1,0 +1,220 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>03-payoff</title>
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          width: 1920px;
+          height: 1080px;
+          overflow: hidden;
+          container-type: size;
+          font-family: "Unbounded", sans-serif;
+          --ink-black: #080808;
+          --cream: #f0ece4;
+          --cream-hint: #827e79;
+          --fire-orange: #f5a623;
+        }
+
+        @font-face {
+          font-family: "Unbounded";
+          src: url("assets/fonts/Yq6F-LOTXCb04q32xlpat-6uR42XTqtG6__2040.ttf") format("truetype");
+          font-weight: 700;
+          font-style: normal;
+          font-display: block;
+        }
+
+        @font-face {
+          font-family: "Space Mono";
+          src: url("assets/fonts/i7dPIFZifjKcF5UAWdDRUEY.ttf") format("truetype");
+          font-weight: 400;
+          font-style: normal;
+          font-display: block;
+        }
+
+        .fr03-bg {
+          position: absolute;
+          inset: 0;
+          background: var(--ink-black);
+        }
+
+        .fr03-scene {
+          position: absolute;
+          inset: 0;
+          display: grid;
+          place-items: center;
+        }
+
+        .fr03-type-wrap {
+          display: block;
+          will-change: transform, filter, opacity;
+        }
+
+        .fr03-h1 {
+          margin: 0;
+          font-family: "Unbounded", sans-serif;
+          font-weight: 700;
+          font-size: 6.2cqw;
+          line-height: 0.95;
+          letter-spacing: -0.03em;
+          text-transform: lowercase;
+          text-align: center;
+          color: var(--cream);
+          max-width: 70cqw;
+          white-space: nowrap;
+        }
+
+        .fr03-display {
+          margin: 0;
+          font-family: "Unbounded", sans-serif;
+          font-weight: 700;
+          font-size: 10cqw;
+          line-height: 0.95;
+          letter-spacing: -0.04em;
+          text-transform: lowercase;
+          text-align: center;
+          color: var(--fire-orange);
+          max-width: 70cqw;
+          white-space: nowrap;
+        }
+
+        .fr03-wm-wrap {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1.6cqw;
+          will-change: transform, opacity;
+        }
+
+        .fr03-wm-lockup {
+          font-family: "Unbounded", sans-serif;
+          font-weight: 700;
+          font-size: 8cqw;
+          letter-spacing: -0.02em;
+          line-height: 1;
+          white-space: nowrap;
+        }
+
+        .fr03-wm-cream {
+          color: var(--cream);
+        }
+
+        .fr03-wm-amber {
+          color: var(--fire-orange);
+        }
+
+        .fr03-wm-beta {
+          font-family: "Space Mono", monospace;
+          font-weight: 400;
+          font-size: 2.1cqw;
+          color: var(--cream-hint);
+          vertical-align: super;
+          margin-left: 0.3cqw;
+        }
+
+        .fr03-underline {
+          display: block;
+          width: 20cqw;
+          height: 0.24cqw;
+          background: var(--fire-orange);
+          transform-origin: 0% 50%;
+          transform: scaleX(0);
+        }
+      </style>
+
+      <div id="root" data-composition-id="03-payoff" data-width="1920" data-height="1080" data-duration="6">
+        <!-- full-bleed ground, spans the whole shot -->
+        <div id="fr03-bg" class="clip fr03-bg" data-start="0" data-duration="6" data-track-index="0"></div>
+
+        <!-- Scene 1 (0.0-2.2s): "from vibe to track" hard-cuts in, holds, then exits via
+             zoom-through (forward) into Scene 2 -->
+        <div id="fr03-line1" class="clip fr03-scene" data-start="0" data-duration="2.2" data-track-index="1">
+          <div class="fr03-type-wrap" id="fr03-line1-wrap">
+            <h1 class="fr03-h1">from vibe to track</h1>
+          </div>
+        </div>
+
+        <!-- Scene 2 (2.2-3.8s): "in seconds." lands from the zoom-through cut, holds as the
+             video's one accent-colored beat, then clears by a fade -->
+        <div id="fr03-line2" class="clip fr03-scene" data-start="2.2" data-duration="1.6" data-track-index="1">
+          <div class="fr03-type-wrap" id="fr03-line2-wrap">
+            <h1 class="fr03-display">in seconds.</h1>
+          </div>
+        </div>
+
+        <!-- Scene 3 (3.8-6.0s): the LyriaStudio wordmark pops back in as the closing brand
+             mark, draws its underline, and holds static to the end (final frame settle) -->
+        <div id="fr03-wordmark" class="clip fr03-scene" data-start="3.8" data-duration="2.2" data-track-index="1">
+          <div class="fr03-wm-wrap" id="fr03-wm-wrap">
+            <div class="fr03-wm-lockup">
+              <span class="fr03-wm-cream">Lyria</span><span class="fr03-wm-amber">Studio</span><sup class="fr03-wm-beta">β</sup>
+            </div>
+            <div class="fr03-underline" id="fr03-underline"></div>
+          </div>
+        </div>
+      </div>
+
+      <script src="assets/vendor/gsap.min.js"></script>
+      <script>
+        (function () {
+          window.__timelines = window.__timelines || {};
+          var tl = gsap.timeline({ paused: true });
+
+          // ---- Scene 1: "from vibe to track" ----
+          // Hard cut in at t=0 (default CSS state: opacity 1 / scale 1 / blur 0 — no
+          // entrance tween, matches "hard-cuts in ... no roll or blur"). Holds until the
+          // zoom-through exit begins at 2.0s.
+
+          // Zoom-Through (forward), text-scale blur — cut-catalog recipe.
+          // Phase 1: exit accelerates toward the viewer (2.0 -> 2.2)
+          tl.to("#fr03-line1-wrap", { scale: 1.2, filter: "blur(10px)", duration: 0.2, ease: "power3.in" }, 2.0);
+          tl.to("#fr03-line1-wrap", { opacity: 0.15, duration: 0.2, ease: "none" }, 2.0);
+
+          // Phase 2: hard cut at peak velocity/blur (t=2.2, matches Scene 2's data-start)
+          tl.set("#fr03-line1-wrap", { opacity: 0 }, 2.2);
+          tl.set("#fr03-line2-wrap", { opacity: 0.15, scale: 0.75, filter: "blur(10px)" }, 2.2);
+
+          // Phase 3: entry continues forward, decelerating into the focal plane (2.2 -> 2.7)
+          tl.to(
+            "#fr03-line2-wrap",
+            { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" },
+            2.2,
+          );
+
+          // ---- Scene 2: "in seconds." holds (2.7 -> 3.5), then clears by fade (3.5 -> 3.8) ----
+          tl.to(
+            "#fr03-line2-wrap",
+            { opacity: 0, scale: 0.92, duration: 0.3, ease: "power2.in" },
+            3.5,
+          );
+          tl.set("#fr03-line2-wrap", { opacity: 0 }, 3.8);
+
+          // ---- Scene 3: closing wordmark ----
+          // Spring-pop entrance, smooth long-tail settle (no bounce — project motion grammar).
+          tl.fromTo(
+            "#fr03-wm-wrap",
+            { scale: 0, opacity: 0 },
+            { scale: 1, opacity: 1, duration: 0.6, ease: "power3.out" },
+            3.8,
+          );
+
+          // Amber underline draws in left -> right beneath the lockup, then the frame holds
+          // static to the end as the video's true resting state.
+          tl.fromTo(
+            "#fr03-underline",
+            { scaleX: 0 },
+            { scaleX: 1, duration: 0.5, ease: "power3.out" },
+            4.5,
+          );
+
+          window.__timelines["03-payoff"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

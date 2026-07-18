@@ -1,0 +1,142 @@
+[div] Lyria
+[em] Studio
+[div] MOCK MODE
+[div] ```
+[span] 01 / VIBE
+[span] Chill
+[span] Epic
+[span] Dark
+[span] Happy
+[span] Romantic
+[span] Tense
+[span] Dreamy
+[span] Energy
+[span] 02 / GENRE
+[div] Lo-fi
+[div] Hip-Hop
+[div] Electronic
+[div] Jazz
+[div] Ambient
+[div] Cinematic
+[div] Classical
+[div] R&B
+[div] Rock
+[div] Bossa Nova
+[div] Synthwave
+[div] Funk
+[div] 80s Synth
+[div] 90s Boom-Bap
+[div] Modern
+[div] Vintage
+[div] K-Pop
+[div] Neo-Soul
+[div] Baroque
+[div] Retro Future
+[span] 03 / INSTRUMENTS
+[span] Piano
+[span] Guitar
+[span] 🎛️
+[span] Synth
+[span] Strings
+[span] Drums
+[span] Bass
+[span] Brass
+[span] Flute
+[span] Organ
+[span] Harp
+[span] Violin
+[span] 808
+[span] 04 / TEMPO
+[span] Slow
+[span] Laid-back · ~90 BPM
+[span] Fast
+[span] 05 / ENERGY ARC
+[div] Consistent
+[div] Build Up
+[div] Drop
+[div] Wave
+[div] Fade Out
+[div] Cold Open
+[span] 06 / VOCALS
+[div] 🎸 Instrumental
+[div] 🎤 With Vocals
+[span] GENDER
+[div] Male
+[div] Female
+[div] Duet
+[span] TIMBRE
+[div] Smooth
+[div] Breathy
+[div] Raspy
+[div] Soulful
+[div] Operatic
+[div] Airy
+[div] Warm
+[div] Gravelly
+[span] LANG
+[div] 🇬🇧 EN
+[div] 🇪🇸 ES
+[div] 🇫🇷 FR
+[div] 🇩🇪 DE
+[div] 🇯🇵 JA
+[div] 🇰🇷 KO
+[div] 🇮🇳 HI
+[div] 🇧🇷 PT
+[span] LYRICS
+[div] ✨ AI Writes
+[div] 💬 Theme
+[div] ✏️ Custom
+[span] AI Prompt Engine
+[span] 07 / YOUR IDEA
+[span] ✨ Optimize with AI
+[div] ✦ Optimized Prompt
+[button] ↑ Use this prompt
+[span] 08 / STARTER IDEAS
+[span] Synthwave · Dreamy
+[div] "Dreamy synthwave with lush pad layers and a soft arpeggio. Slow 75 BPM. Spacious reverb, nostalgic and introspective mood."
+[span] Cinematic · Epic
+[div] "A sweeping orchestral piece with brass fanfare and soaring strings. Heroic mood, builds from solo piano to full orchestra at 120 BPM."
+[span] Bossa Nova · Romantic
+[div] "Romantic Bossa Nova fusion with nylon-string guitar, warm electric piano, gentle samba rhythm at 100 BPM. Intimate and warm."
+[span] Refresh ideas
+[span] 09 / LIVE PROMPT
+[span] [Tempo]
+[div] ~90 BPM
+[span] [Arc]
+[div] Build Up
+[span] [Vocal]
+[span] Instrumental only
+[span] 10 / EXCLUDE
+[div] No Vocals
+[div] No Drums
+[div] No Bass
+[div] No Guitar
+[div] No Synth
+[div] No Brass
+[div] No Strings
+[div] No Distortion
+[div] No Reverb
+[span] 11 / MODEL
+[span] LYRIA 3
+[div] Quick Clip
+[div] 30 sec · Fast · Great for prototyping
+[span] LYRIA 3 PRO
+[div] Full Track
+[div] Up to 3 min · Timestamp control · Best quality
+[span] ⚡ Generate Music
+[div] 0:00 / 0:00
+[button] 🔁 Variation
+[button] ♡ Save
+[button] 📋 Prompt
+[button] ⬇ Export
+[div] ```
+[span] PROMPT OPTIMIZER
+[p] Paste any rough music idea. AI transforms it into a structured Lyria prompt using the official framework.
+[span] ✨ Optimize Prompt
+[div] ✦ Lyria-Optimized Prompt
+[button] → Send to Create tab
+[span] Prompt History
+[span] MY LIBRARY
+[p] No saved tracks yet.
+[p] Generate and save your first track!
+[div] OPTIMIZE

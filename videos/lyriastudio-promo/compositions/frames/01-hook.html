@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- head is metadata for the source file only; the runtime discards it on mount -->
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face {
+          font-family: "Unbounded";
+          src: url("assets/fonts/Yq6F-LOTXCb04q32xlpat-6uR42XTqtG6__2040.ttf") format("truetype");
+          font-weight: 700;
+          font-style: normal;
+        }
+        @font-face {
+          font-family: "Space Mono";
+          src: url("assets/fonts/i7dPIFZifjKcF5UAWdDRUEY.ttf") format("truetype");
+          font-weight: 400;
+          font-style: normal;
+        }
+
+        /* Root: style by #root, never a class — see hyperframes-core Pitfall 3. */
+        #root {
+          position: absolute;
+          inset: 0;
+          width: 1920px;
+          height: 1080px;
+          overflow: hidden;
+          background: #080808;
+          font-family: "Space Mono", monospace;
+        }
+
+        /* Full-bleed ground lives on a dedicated clip, never on #root itself. */
+        .hook-bg {
+          position: absolute;
+          inset: 0;
+          background: #080808;
+        }
+
+        .hook-camera {
+          position: absolute;
+          inset: 0;
+          transform-origin: 50% 50%;
+          will-change: transform;
+        }
+
+        .hook-tagline-row {
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 455px;
+          display: flex;
+          justify-content: center;
+        }
+        .hook-tagline-box {
+          display: inline-flex;
+          align-items: baseline;
+          width: 25ch;
+          font-family: "Space Mono", monospace;
+          font-weight: 400;
+          font-size: 42px;
+          letter-spacing: 0.01em;
+          color: #f0ece4;
+          transform-origin: 50% 50%;
+          will-change: transform;
+        }
+        .hook-tagline-text {
+          white-space: pre;
+        }
+        .hook-caret {
+          display: inline-block;
+          width: 4px;
+          height: 42px;
+          margin-left: 6px;
+          background: #f5a623;
+          transform: translateY(4px);
+        }
+
+        .hook-wordmark-row {
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 378px;
+          display: flex;
+          justify-content: center;
+        }
+        .hook-wordmark-inner {
+          display: grid;
+          grid-template-columns: max-content;
+          justify-content: center;
+          row-gap: 30px;
+        }
+        .hook-wordmark {
+          position: relative;
+          display: inline-block;
+          font-family: "Unbounded", sans-serif;
+          font-weight: 700;
+          font-size: 160px;
+          line-height: 1;
+          letter-spacing: -0.01em;
+          color: #f0ece4;
+          transform-origin: 50% 50%;
+          will-change: transform, text-shadow;
+        }
+        .hook-studio {
+          color: #f5a623;
+          font-style: normal;
+        }
+        .hook-beta {
+          position: absolute;
+          top: -8px;
+          right: -46px;
+          font-family: "Space Mono", monospace;
+          font-weight: 400;
+          font-size: 40px;
+          color: #9a9490;
+          transform-origin: 0% 100%;
+          will-change: transform;
+        }
+        .hook-underline {
+          width: 100%;
+          height: 4px;
+          background: #f5a623;
+          transform-origin: 0% 50%;
+          will-change: transform;
+        }
+      </style>
+
+      <div id="root" data-composition-id="01-hook" data-width="1920" data-height="1080" data-duration="5.5">
+        <div
+          id="01-hook-bg"
+          class="hook-bg clip"
+          data-start="0"
+          data-duration="5.5"
+          data-track-index="0"
+        ></div>
+
+        <div
+          id="01-hook-camera"
+          class="hook-camera clip"
+          data-start="0"
+          data-duration="5.5"
+          data-track-index="1"
+        >
+          <div class="hook-tagline-row" id="01-hook-tagline-row">
+            <div class="hook-tagline-box" id="01-hook-tagline-box">
+              <span class="hook-tagline-text" id="01-hook-tagline-text"></span><span
+                class="hook-caret"
+                id="01-hook-caret"
+              ></span>
+            </div>
+          </div>
+
+          <div class="hook-wordmark-row" id="01-hook-wordmark-row">
+            <div class="hook-wordmark-inner" id="01-hook-wordmark-inner">
+              <div class="hook-wordmark" id="01-hook-wordmark">
+                Lyria<em class="hook-studio">Studio</em><sup class="hook-beta" id="01-hook-beta">β</sup>
+              </div>
+              <div class="hook-underline" id="01-hook-underline"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script src="assets/vendor/gsap.min.js"></script>
+      <script>
+        window.__timelines = window.__timelines || {};
+        const tl = gsap.timeline({ paused: true });
+
+        // ---- Scene 1 (0.0-1.6s): mono tagline types out, caret trails ----
+        const FULL_TEXT = "pick a vibe. get a track.";
+        const TYPE_START = 0.05;
+        const TYPE_DUR = 1.3; // ~19 cps across 26 chars -> fits the 1.6s window
+
+        const textEl = document.getElementById("01-hook-tagline-text");
+        const caretEl = document.getElementById("01-hook-caret");
+
+        const typeDriver = { len: 0 };
+        tl.to(
+          typeDriver,
+          {
+            len: FULL_TEXT.length,
+            duration: TYPE_DUR,
+            ease: "power1.inOut",
+            onUpdate: () => {
+              textEl.textContent = FULL_TEXT.substring(0, Math.floor(typeDriver.len));
+            },
+          },
+          TYPE_START,
+        );
+
+        // Caret solid through typing, then fades once the tagline starts
+        // shrinking away (scene 2) — no CSS @keyframes, driven on the timeline.
+        const CARET_FADE_START = 1.55;
+        const CARET_FADE_DUR = 0.2;
+        tl.fromTo(
+          caretEl,
+          { opacity: 1 },
+          { opacity: 0, duration: CARET_FADE_DUR, ease: "power1.out" },
+          CARET_FADE_START,
+        );
+
+        // ---- Scene 2 (1.6-3.0s): tagline shrinks + drifts up, wordmark pops in ----
+        // Direct element refs (not "#01-hook-…" selector strings): an id that
+        // starts with a digit is a valid HTML id but NOT a valid CSS/querySelector
+        // identifier, so getElementById + a real node reference is the safe path.
+        const taglineBoxEl = document.getElementById("01-hook-tagline-box");
+        const wordmarkEl = document.getElementById("01-hook-wordmark");
+        const betaEl = document.getElementById("01-hook-beta");
+        const underlineEl = document.getElementById("01-hook-underline");
+
+        const TAGLINE_SHRINK_START = 1.6;
+        const TAGLINE_SHRINK_DUR = 0.6;
+        tl.fromTo(
+          taglineBoxEl,
+          { scale: 1, y: 0, opacity: 1 },
+          { scale: 0.62, y: -160, opacity: 0.75, duration: TAGLINE_SHRINK_DUR, ease: "power3.out" },
+          TAGLINE_SHRINK_START,
+        );
+
+        const WORDMARK_POP_START = 1.75;
+        const WORDMARK_POP_DUR = 0.6;
+        tl.fromTo(
+          wordmarkEl,
+          { scale: 0, opacity: 0, y: 16 },
+          { scale: 1, opacity: 1, y: 0, duration: WORDMARK_POP_DUR, ease: "power3.out" },
+          WORDMARK_POP_START,
+        );
+
+        const BETA_POP_START = 2.05;
+        const BETA_POP_DUR = 0.35;
+        tl.fromTo(
+          betaEl,
+          { scale: 0, opacity: 0, y: -10 },
+          { scale: 1, opacity: 1, y: 0, duration: BETA_POP_DUR, ease: "power3.out" },
+          BETA_POP_START,
+        );
+
+        // Companion tagline exits as the layout recenters on the wordmark.
+        const TAGLINE_EXIT_START = 2.6;
+        const TAGLINE_EXIT_DUR = 0.4;
+        tl.to(
+          taglineBoxEl,
+          { opacity: 0, duration: TAGLINE_EXIT_DUR, ease: "power2.out" },
+          TAGLINE_EXIT_START,
+        );
+
+        // ---- Scene 3 (3.0-5.0s): camera push-in + underline draw, held glow ----
+        const camera = document.getElementById("01-hook-camera");
+        const CAMERA_PUSH_START = 3.0;
+        const CAMERA_PUSH_DUR = 1.2;
+        const CAMERA_SCALE_TO = 1.06;
+        const cameraState = { scale: 1 };
+        tl.to(
+          cameraState,
+          {
+            scale: CAMERA_SCALE_TO,
+            duration: CAMERA_PUSH_DUR,
+            ease: "power2.out",
+            onUpdate: () => {
+              camera.style.transform = `scale(${cameraState.scale})`;
+            },
+          },
+          CAMERA_PUSH_START,
+        );
+
+        const UNDERLINE_DRAW_START = 3.0;
+        const UNDERLINE_DRAW_DUR = 0.6;
+        tl.fromTo(
+          underlineEl,
+          { scaleX: 0 },
+          { scaleX: 1, duration: UNDERLINE_DRAW_DUR, ease: "power2.out" },
+          UNDERLINE_DRAW_START,
+        );
+
+        // Faint glow pulse — the only life in the held final read.
+        const GLOW_START = 3.6;
+        const GLOW_DUR = 1.4;
+        const GLOW_CYCLES = 1;
+        const glowDriver = { p: 0 };
+        tl.to(
+          glowDriver,
+          {
+            p: Math.PI * 2 * GLOW_CYCLES,
+            duration: GLOW_DUR,
+            ease: "none",
+            onUpdate: () => {
+              const env = Math.max(0, Math.sin(glowDriver.p));
+              const blur = 6 + env * 14;
+              wordmarkEl.style.textShadow = `0 0 ${blur}px rgba(245, 166, 35, ${0.18 + env * 0.22})`;
+            },
+          },
+          GLOW_START,
+        );
+
+        window.__timelines["01-hook"] = tl;
+      </script>
+    </template>
+  </body>
+</html>
